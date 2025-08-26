@@ -3,5 +3,9 @@
 
 int ft_atoi(char *str)
 {
-    
+    int result;
+    int sign;
+
+    sign = -1;
+    return (result * sign);
 }
