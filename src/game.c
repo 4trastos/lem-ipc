@@ -1,4 +1,5 @@
 #include "../incl/lemipc.h"
+#include "../lib/printf/ft_printf.h"
 
 // Fase 2: Lógica del Juego y del Jugador
 

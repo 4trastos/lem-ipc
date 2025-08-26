@@ -1,4 +1,5 @@
 #include "../incl/lemipc.h"
+#include "../lib/printf/ft_printf.h"
 
 //1. Configuración de los Recursos de IPC
 
