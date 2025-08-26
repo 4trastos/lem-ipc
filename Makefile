@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -Werror -Wextra -g
 RM = rm -f
 
-SRC = src/main.c src/game.c src/player.c src/conf.c src/aux.c src/cleanup.c
+SRC = src/main.c src/game.c src/player.c src/resconf.c src/aux.c src/cleanup.c
 
 OBJS = $(SRC:.c=.o)
 

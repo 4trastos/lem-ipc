@@ -66,3 +66,5 @@ El propósito es **hacer que varios procesos se comuniquen e interactúen** usan
 👉 En resumen: es un **juego multijugador en memoria compartida**, donde cada jugador es un proceso independiente que debe coordinarse usando **IPC clásicos de UNIX (shm, sem, msgq)**, y donde el reto real es **gestionar concurrencia, comunicación y sincronización** sin que nada se rompa.
 
 ---
+
+¿Quieres que te prepare un **roadmap paso a paso de implementación** (primero SHM, luego semáforos, luego MSGQ, etc.) para que tengas una guía práctica de cómo atacar este proyecto?
