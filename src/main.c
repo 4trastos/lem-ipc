@@ -3,13 +3,17 @@
 
 int main(int argc, char **argv)
 {
-    if (argc != 4)
+    t_game  *game;
+    key_t   key;
+
+    if (argc < 3 || argc > 4)
     {
-        ft_printf("Error: Use => ./lemipc <player> <gane code> <table>\n");
+        // ./lemipc 1 42 50
+        ft_printf("Error: Use => ./lemipc <team> <ID proyect> <board>\n");
         return (1);
     }
-    ft_printf("Arguments: Player: %s - Game Code: %s - Table: %s\n", argv[1], argv[2], argv[3]);
     // 1. Configuración de los Recursos de IPC
+    key = ftok(".", 42);
     // 2. Lógica del Juego y del Jugador
     // 3. Limpieza de Recursos de IPC
     return (0); 
