@@ -9,14 +9,14 @@
 
 typedef struct s_game
 {
-    int     team_id;    // Equipo
-    int     shmid;      // Memoria Compartida
-    int     semid;      // Semaforos
-    int     msgid;      // Colas de Mensajes
-    int     *board_ptr; //  RAM
-    int     x;          // Posición X en tablero
-    int     y;          // Posición Y en tablero
-    pid_t   pid;        // Proceso
+    int     team_id;        // Equipo
+    int     shmid;          // Memoria Compartida
+    int     semid;          // Semaforos
+    int     msgid;          // Colas de Mensajes
+    int     *board_ptr;     //  RAM
+    int     x;              // Posición X en tablero
+    int     y;              // Posición Y en tablero
+    pid_t   pid;            // Proceso
 }   t_game;
 
 //*** struct functions ***
