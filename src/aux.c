@@ -16,7 +16,7 @@ int argument_parsing(char **argv)
         i++;
     }
     
-    return (i);
+    return (0);
 }
 
 int ft_gameatoi(char *str)
@@ -30,7 +30,7 @@ int ft_gameatoi(char *str)
     i = 0;
     while (str[i] != '\0')
     {
-        if (str[i] < 0 || str[i] > 9)
+        if (str[i] < '0' || str[i] > '9')
             return (-1);
         i++;
     }

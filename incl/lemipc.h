@@ -4,7 +4,8 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <sys/ipc.h>
-# include <sys/mman.h>
+# include <sys/sem.h>
+# include <sys/shm.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
@@ -28,9 +29,6 @@ typedef struct s_game
 //*** struct functions ***
 
 //*** explicit functions ***
-key_t   ftok(const char *pathname, int proj_id);
-int     shmget(key_t key, int size, int shmflg);
-void    *shmat(int shmid, const void *shmaddr, int shmflg);
 
 //*** auxiliary functions ***
 int     ft_gameatoi(char *str);

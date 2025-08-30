@@ -3,21 +3,6 @@
 
 //1. Configuración de los Recursos de IPC
 
-key_t   ftok(const char *pathname, int proj_id)
-{
-    
-}
-
-int shmget(key_t key, int size, int shmflg)
-{
-
-}
-
-void *shmat(int shmid, const void *shmaddr, int shmflg)
-{
-
-}
-
 // Paso 1.1: Identificador Único (key_t)
 // Paso 1.2: Memoria Compartida (shm)
 // Paso 1.3: Semaforos (sem)
