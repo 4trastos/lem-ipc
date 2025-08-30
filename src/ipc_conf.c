@@ -19,8 +19,8 @@ int    player_one(t_game *game, key_t  key)
 
     aux = game;
     aux->player = 1;
-    aux->board_ptr = (int *)shmat(aux->shmid, NULL, 0);
-    if (aux->board_ptr == (int *)-1)
+    aux->board_ptr = shmat(aux->shmid, NULL, 0);
+    if (aux->board_ptr == (void *)-1)
     {
         ft_printf("Error: shmat failed\n");
         return (-1);
@@ -41,8 +41,8 @@ int    other_player(t_game *game, key_t key)
     aux = game;
     aux->player = 2;
     aux->shmid = shmget(key, 0, 0);         // Nos unimos a la memoria compartida existente
-    aux->board_ptr = (int *)shmat(aux->shmid, NULL, 0);
-    if (aux->board_ptr == (int *)-1)
+    aux->board_ptr = shmat(aux->shmid, NULL, 0);
+    if (aux->board_ptr == (void *)-1)
     {
         ft_printf("Error: shmat failed\n");
         return (-1);

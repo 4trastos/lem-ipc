@@ -6,18 +6,20 @@ int main(int argc, char **argv)
     t_game  *game;
     pid_t   pid;
     key_t   key;
-    int     board = 100;
-    int     player = 0;
+    int     board;
+    int     player;
 
-    if (argc != 3 || (ft_gameatoi(argv[2]) != 42))
+    player = 0;
+    board = 0;
+    if (argc < 3 || argc > 4 || (ft_gameatoi(argv[2]) != 42))
     {
-        ft_printf("Error: Use => ./lemipc <team> <ID proyect: 42>\n");
+        ft_printf("Error: Use => ./lemipc <team> <ID proyect: 42> <Board (opcional)>\n");
         return (1);
     }
 
-    if (argument_parsing(argv) == -1)
+    if (argument_parsing(argv, &board) == -1)
         return (1);
-        
+
     key = ftok(".", ft_gameatoi(argv[2]));
     if (key == -1)
     {
@@ -54,7 +56,7 @@ int main(int argc, char **argv)
 
     }
 
-    ft_printf("PID: %d, Team: %d, Player: %d\n", game->pid, game->team_id, game->player);
+    ft_printf("PID: %d, Team: %d, Player: %d, Board: %d\n", game->pid, game->team_id, game->player, board);
     // 2. Lógica del Juego y del Jugador
 
     // 3. Limpieza de Recursos de IPC

@@ -15,15 +15,15 @@
 
 typedef struct s_game
 {
-    int     team_id;        // Equipo
-    int     player;         // Nº de jugador
-    int     shmid;          // Memoria Compartida
-    int     semid;          // Semaforos
-    int     msgid;          // Colas de Mensajes
-    int     *board_ptr;     //  RAM
-    int     x;              // Posición X en tablero
-    int     y;              // Posición Y en tablero
-    pid_t   pid;            // Proceso
+    int             team_id;        // Equipo
+    int             player;         // Nº de jugador
+    int             shmid;          // Memoria Compartida
+    int             semid;          // Semaforos
+    int             msgid;          // Colas de Mensajes
+    unsigned char   *board_ptr;     //  RAM
+    int             x;              // Posición X en tablero
+    int             y;              // Posición Y en tablero
+    pid_t           pid;            // Proceso
 }   t_game;
 
 //*** struct functions ***
@@ -36,6 +36,6 @@ void    clearmemsem(t_game *game);
 
 //*** auxiliary functions ***
 int     ft_gameatoi(char *str);
-int     argument_parsing(char **argv);
+int     argument_parsing(char **argv, int *board);
 
 #endif
