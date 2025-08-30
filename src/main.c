@@ -67,8 +67,8 @@ int main(int argc, char **argv)
         // semop(game->semid, &sops, 1);
     }
 
-    // 2. Lógica del Juego y del Jugador
     ft_printf("PID: %d, Team: %d, Player: %d\n", game->pid, game->team_id, game->player);
+    // 2. Lógica del Juego y del Jugador
 
     // 3. Limpieza de Recursos de IPC
     // Las funciones de limpieza se llamarán al final del juego, no aquí.
