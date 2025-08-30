@@ -2,14 +2,19 @@
 # define LEMIPC_H
 
 # include <sys/types.h>
+# include <sys/wait.h>
 # include <sys/ipc.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
+# include <unistd.h>
+# include <signal.h>
+# include <limits.h>
 
 typedef struct s_game
 {
     int     team_id;        // Equipo
+    int     player;         // Nº de jugador
     int     shmid;          // Memoria Compartida
     int     semid;          // Semaforos
     int     msgid;          // Colas de Mensajes
@@ -25,6 +30,5 @@ typedef struct s_game
 key_t   ftok(const char *pathname, int proj_id);
 
 //*** auxiliary functions ***
-int     ft_atoi(char *str);
-
+int     ft_gameatoi(char *str);
 #endif
