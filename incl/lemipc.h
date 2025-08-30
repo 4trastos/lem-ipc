@@ -29,6 +29,10 @@ typedef struct s_game
 //*** struct functions ***
 
 //*** explicit functions ***
+int     ft_resconf(t_game *game, key_t key, int board);
+int     player_one(t_game *game, key_t  key);
+int     other_player(t_game *game, key_t key);
+void    clearmemsem(t_game *game);
 
 //*** auxiliary functions ***
 int     ft_gameatoi(char *str);

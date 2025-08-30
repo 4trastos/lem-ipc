@@ -1,6 +1,17 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
+void    clearmemsem(t_game *game)
+{
+    t_game  *aux;
+
+    aux = game;
+    if (shmctl(aux->shmid, IPC_RMID, 0) == -1)
+        ft_printf("Error: Failed to remove shared memory\n");
+    if (semctl(aux->semid, IPC_RMID, 0) == -1)
+        ft_printf("Error: Failed to remove semaphore\n");
+}
+
 // Fase 3: Limpieza de Recursos de IPC
 
 /* Esta es la fase final y es tan importante como la inicial para evitar la "contaminación" del sistema.

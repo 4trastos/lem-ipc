@@ -1,6 +1,55 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
+int    ft_resconf(t_game *game, key_t  key, int board)
+{
+    t_game  *aux;
+
+    aux = game;
+    aux->shmid = shmget(key, board, IPC_CREAT | IPC_EXCL | 0666);
+    if (aux->shmid == -1)
+        return (2);
+    else
+        return (1);
+}
+
+int    player_one(t_game *game, key_t  key)
+{
+    t_game  *aux;
+
+    aux = game;
+    aux->player = 1;
+    aux->board_ptr = (int *)shmat(aux->shmid, NULL, 0);
+    if (aux->board_ptr == (int *)-1)
+    {
+        ft_printf("Error: shmat failed\n");
+        return (-1);
+    }
+    aux->semid = semget(key, 1, IPC_CREAT | 0666);
+    if (aux->semid == -1)
+    {
+        ft_printf("Error: semget failed\n");
+        return (-1);
+    }
+    return (0);
+}
+
+int    other_player(t_game *game, key_t key)
+{
+    t_game  *aux;
+
+    aux = game;
+    aux->player = 2;
+    aux->shmid = shmget(key, 0, 0);         // Nos unimos a la memoria compartida existente
+    aux->board_ptr = (int *)shmat(aux->shmid, NULL, 0);
+    if (aux->board_ptr == (int *)-1)
+    {
+        ft_printf("Error: shmat failed\n");
+        return (-1);
+    }
+    return (0);
+}
+
 //1. Configuración de los Recursos de IPC
 
 // Paso 1.1: Identificador Único (key_t)
