@@ -56,11 +56,11 @@ int main(int argc, char **argv)
 
     }
 
-    ft_printf("PID: %d, Team: %d, Player: %d, Board: %d\n", game->pid, game->team_id, game->player, board);
+    ft_printf("PID: %d, Team: %d, Player: %d, Key: %d, Board: %d\n", game->pid, game->team_id, game->player,key ,board);
     // 2. Lógica del Juego y del Jugador
 
     // 3. Limpieza de Recursos de IPC
-    clearmemsem(game);
+    //clearmemsem(game);
 
     free (game);
     return (0); 
