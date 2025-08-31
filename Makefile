@@ -13,7 +13,7 @@ FT_PRINTF = $(FT_PRINTF_DIR)/libftprintf.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(FT_PRINTF)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(FT_PRINTF_DIR) -lftprintf
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(FT_PRINTF_DIR) -lftprintf -lm
 
 $(FT_PRINTF):
 	@make -C $(FT_PRINTF_DIR)
