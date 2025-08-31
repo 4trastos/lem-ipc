@@ -28,6 +28,7 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 	@make fclean -C $(FT_PRINTF_DIR)
+	@ipcrm -a
 
 re: fclean all
 
