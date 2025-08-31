@@ -5,7 +5,7 @@ int main(int argc, char **argv)
 {
     t_game  *game;
     pid_t   pid;
-    key_t   key;
+    key_t   key;                    //  identificador único del segmento de memoria
     int     board;
     int     player;
 
@@ -31,6 +31,7 @@ int main(int argc, char **argv)
     pid = getpid();
     game->pid = pid;
     game->team_id = ft_gameatoi(argv[1]);
+    game->board_size = board;
     player = ft_resconf(game, key, board);
     if (player == 1)
     {
@@ -40,6 +41,7 @@ int main(int argc, char **argv)
             return (1);
         }
         // Inicialización del semáforo (un paso futuro)
+        //  la inicialización del tablero y los semáforos.
         // struct sembuf sops;
         // sops.sem_num = 0;
         // sops.sem_op = 1;

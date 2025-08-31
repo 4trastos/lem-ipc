@@ -6,6 +6,7 @@
 # include <sys/ipc.h>
 # include <sys/sem.h>
 # include <sys/shm.h>
+# include <sys/msg.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
@@ -13,14 +14,22 @@
 # include <signal.h>
 # include <limits.h>
 
+union semaphunion
+{
+    int             val;
+    struct semid_ds *buf;
+    unsigned short  *array;
+};
+
 typedef struct s_game
 {
     int             team_id;        // Equipo
     int             player;         // Nº de jugador
-    int             shmid;          // Memoria Compartida
+    int             shmid;          // ID Memoria Compartida
     int             semid;          // Semaforos
     int             msgid;          // Colas de Mensajes
-    unsigned char   *board_ptr;     //  RAM
+    unsigned char   *board_ptr;     // RAM
+    int             board_size;     // Tamaño tablero
     int             x;              // Posición X en tablero
     int             y;              // Posición Y en tablero
     pid_t           pid;            // Proceso

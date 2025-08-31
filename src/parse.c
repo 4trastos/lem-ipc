@@ -56,6 +56,5 @@ int ft_gameatoi(char *str)
             return (-1);
         i++; 
     }
-
     return ((int)num);
 }
