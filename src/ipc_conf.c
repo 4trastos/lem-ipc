@@ -21,7 +21,6 @@ int    player_one(t_gamer *gamer, key_t  key)
     struct sembuf       sops;
 
     aux = gamer;
-    aux->player = 1;
     aux->board_ptr = shmat(aux->shmid, NULL, 0);                        // Adjuntar la memoria al proceso
     if (aux->board_ptr == (void *)-1)
     {
@@ -56,8 +55,8 @@ int    player_one(t_gamer *gamer, key_t  key)
     sops.sem_op = -1;
     sops.sem_flg = 0;
     semop(aux->semid, &sops, 1);
-    aux->board_ptr[0] = 1;              // Número de jugador en el 1º Byte
-    aux->board_ptr[1] = aux->team_id;   // Número de equipo  en el 2º Byte
+    aux->board_ptr[0]++;
+    aux->player = aux->board_ptr[0];
     sops.sem_op = 1;
     semop(aux->semid, &sops, 1);
 
