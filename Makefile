@@ -3,7 +3,8 @@ CC = gcc
 CFLAGS = -Wall -Werror -Wextra -g
 RM = rm -f
 
-SRC = src/main.c src/gamer.c src/player.c src/ipc_conf.c src/parse.c src/cleanup.c
+SRC = src/main.c src/game.c src/player.c src/ipc_conf.c src/parse.c src/cleanup.c \
+		src/dead.c src/victory.c 
 OBJS = $(SRC:.c=.o)
 
 FT_PRINTF_DIR = lib/printf
