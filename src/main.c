@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv)
 {
-    t_game  *game;
+    t_gamer  *gamer;
     pid_t   pid;
     key_t   key;                    //  identificador único del segmento de memoria
     int     board;
@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     player = 0;
     board = 0;
-    if (argc < 3 || argc > 4 || (ft_gameatoi(argv[2]) != 42))
+    if (argc < 3 || argc > 4 || (ft_gameratoi(argv[2]) != 42))
     {
         ft_printf("Error: Use => ./lemipc <team> <ID proyect: 42> <Board (opcional)>\n");
         return (1);
@@ -20,43 +20,47 @@ int main(int argc, char **argv)
     if (argument_parsing(argv, &board) == -1)
         return (1);
 
-    key = ftok(".", ft_gameatoi(argv[2]));
+    key = ftok(".", ft_gameratoi(argv[2]));
     if (key == -1)
     {
         ft_printf("Error: ftok failed\n");
         return (1);
     }
     
-    game = malloc(sizeof(t_game));
+    gamer = malloc(sizeof(t_gamer));
     pid = getpid();
-    game->pid = pid;
-    game->team_id = ft_gameatoi(argv[1]);
-    game->board_size = board;
-    player = ft_resconf(game, key, board);
+    gamer->pid = pid;
+    gamer->team_id = ft_gameratoi(argv[1]);
+    gamer->board_size = board;
+    gamer->alive = true;
+    player = ft_resconf(gamer, key, board);
     if (player == 1)
     {
-        if (player_one(game, key) == -1)
+        if (player_one(gamer, key) == -1)
         {
-            free(game);
+            free(gamer);
             return (1);
         }
     }
     else
     {
-        if (other_player(game, key) == -1)
+        if (other_player(gamer, key) == -1)
         {
-            free(game);
+            free(gamer);
             return (1);
         }
-
     }
 
-    ft_printf("PID: %d, Team: %d, Player: %d, Key: %d, Board: %d\n", game->pid, game->team_id, game->player,key ,board);
-    // 2. Lógica del Juego y del Jugador
-
+    ft_printf("PID: %d, Team: %d, Player: %d, Key: %d, Board: %d\n", gamer->pid, gamer->team_id, gamer->player,key ,board);
+    while (gamer->alive)
+    {
+        play_turn(gamer);
+        // Lógica de la Victoria.
+    }
+    
     // 3. Limpieza de Recursos de IPC
-    //clearmemsem(game);
+    //clearmemsem(gamer);
 
-    free (game);
+    free (gamer);
     return (0); 
 }

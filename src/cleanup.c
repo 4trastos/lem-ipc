@@ -1,15 +1,17 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
-void    clearmemsem(t_game *game)
+void    clearmemsem(t_gamer *gamer)
 {
-    t_game  *aux;
+    t_gamer  *aux;
 
-    aux = game;
+    aux = gamer;
     if (shmctl(aux->shmid, IPC_RMID, 0) == -1)
         ft_printf("Error: Failed to remove shared memory\n");
     if (semctl(aux->semid, IPC_RMID, 0) == -1)
         ft_printf("Error: Failed to remove semaphore\n");
+    if (msgctl(aux->msgid, IPC_RMID, 0) == -1)
+        ft_printf("Error: Failde to remove message queue\n");
 }
 
 // Fase 3: Limpieza de Recursos de IPC

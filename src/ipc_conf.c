@@ -2,11 +2,11 @@
 #include "../lib/printf/ft_printf.h"
 
 // Verificación si los recursos IPC ya existen
-int    ft_resconf(t_game *game, key_t  key, int board)
+int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 {
-    t_game  *aux;
+    t_gamer  *aux;
 
-    aux = game;
+    aux = gamer;
     aux->shmid = shmget(key, board, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
     if (aux->shmid == -1)
         return (2);
@@ -15,12 +15,12 @@ int    ft_resconf(t_game *game, key_t  key, int board)
 }
 
 // Lógica para el primer jugador
-int    player_one(t_game *game, key_t  key)
+int    player_one(t_gamer *gamer, key_t  key)
 {
-    t_game              *aux;
+    t_gamer              *aux;
     union semaphunion   arg;
 
-    aux = game;
+    aux = gamer;
     aux->player = 1;
     aux->board_ptr = shmat(aux->shmid, NULL, 0);                        // Adjuntar la memoria al proceso
     if (aux->board_ptr == (void *)-1)
@@ -54,11 +54,11 @@ int    player_one(t_game *game, key_t  key)
 }
 
 // Lógica para los jugadores subsiguientes
-int    other_player(t_game *game, key_t key)
+int    other_player(t_gamer *gamer, key_t key)
 {
-    t_game  *aux;
+    t_gamer  *aux;
 
-    aux = game;
+    aux = gamer;
     aux->player = 2;
     aux->shmid = shmget(key, 0, 0);                                     // Unirse a la memoria compartida existente
     aux->board_ptr = shmat(aux->shmid, NULL, 0);

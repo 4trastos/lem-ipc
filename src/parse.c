@@ -11,14 +11,14 @@ int argument_parsing(char **argv, int *board)
     *board = 10000;
     while (argv[i] != NULL)
     {
-        if (ft_gameatoi(argv[i]) == -1)
+        if (ft_gameratoi(argv[i]) == -1)
         {
             ft_printf("Error: Invalid argument. just 'int'.\n", argv[i]);
             return (-1);
         }
         if (i == 3)
         {
-            size = ft_gameatoi(argv[i]);
+            size = ft_gameratoi(argv[i]);
             if (size <= 0 || size > 100)
             {
                 ft_printf("Error: The length of the board side must be a value between 1 and 100.\n");
@@ -31,7 +31,7 @@ int argument_parsing(char **argv, int *board)
     return (0);
 }
 
-int ft_gameatoi(char *str)
+int ft_gameratoi(char *str)
 {
     long long num;
     int i;

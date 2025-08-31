@@ -13,6 +13,7 @@
 # include <unistd.h>
 # include <signal.h>
 # include <limits.h>
+# include <stdbool.h>
 
 union semaphunion
 {
@@ -21,7 +22,7 @@ union semaphunion
     unsigned short  *array;
 };
 
-typedef struct s_game
+typedef struct s_gamer
 {
     int             team_id;        // Equipo
     int             player;         // Nº de jugador
@@ -32,19 +33,22 @@ typedef struct s_game
     int             board_size;     // Tamaño tablero
     int             x;              // Posición X en tablero
     int             y;              // Posición Y en tablero
+    bool            alive;          // Vivo o Muerto
+    bool            victory;        // Victoria de equipo
     pid_t           pid;            // Proceso
-}   t_game;
+}   t_gamer;
 
-//*** struct functions ***
+//*** gamer functions ***
+void    play_turn(t_gamer *gamer);
 
 //*** explicit functions ***
-int     ft_resconf(t_game *game, key_t key, int board);
-int     player_one(t_game *game, key_t  key);
-int     other_player(t_game *game, key_t key);
-void    clearmemsem(t_game *game);
+int     ft_resconf(t_gamer *gamer, key_t key, int board);
+int     player_one(t_gamer *gamer, key_t  key);
+int     other_player(t_gamer *gamer, key_t key);
+void    clearmemsem(t_gamer *gamer);
 
 //*** auxiliary functions ***
-int     ft_gameatoi(char *str);
+int     ft_gameratoi(char *str);
 int     argument_parsing(char **argv, int *board);
 
 #endif
