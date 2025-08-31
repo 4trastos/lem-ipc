@@ -14,6 +14,8 @@
 # include <signal.h>
 # include <limits.h>
 # include <stdbool.h>
+# include <time.h>
+# include <math.h>
 
 union semaphunion
 {
@@ -40,6 +42,7 @@ typedef struct s_gamer
 
 //*** gamer functions ***
 void    play_turn(t_gamer *gamer);
+void    place_player_randomly(t_gamer *gamer);
 
 //*** explicit functions ***
 int     ft_resconf(t_gamer *gamer, key_t key, int board);
