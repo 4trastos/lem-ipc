@@ -40,13 +40,6 @@ int main(int argc, char **argv)
             free(game);
             return (1);
         }
-        // Inicialización del semáforo (un paso futuro)
-        //  la inicialización del tablero y los semáforos.
-        // struct sembuf sops;
-        // sops.sem_num = 0;
-        // sops.sem_op = 1;
-        // sops.sem_flg = 0;
-        // semop(game->semid, &sops, 1);
     }
     else
     {

@@ -1,6 +1,7 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
+// Verificación si los recursos IPC ya existen
 int    ft_resconf(t_game *game, key_t  key, int board)
 {
     t_game  *aux;
@@ -13,6 +14,7 @@ int    ft_resconf(t_game *game, key_t  key, int board)
         return (1);
 }
 
+// Lógica para el primer jugador
 int    player_one(t_game *game, key_t  key)
 {
     t_game              *aux;
@@ -51,6 +53,7 @@ int    player_one(t_game *game, key_t  key)
     return (0);
 }
 
+// Lógica para los jugadores subsiguientes
 int    other_player(t_game *game, key_t key)
 {
     t_game  *aux;
