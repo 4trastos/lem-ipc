@@ -31,11 +31,12 @@ int main(int argc, char **argv)
     pid = getpid();
     gamer->pid = pid;
     gamer->team_id = ft_gameratoi(argv[1]);
-    gamer->board_size = board;
     gamer->alive = true;
     player = ft_resconf(gamer, key, board);
     if (player == 1)
     {
+        gamer->board_size = board;
+        gamer->board_dim = (int)sqrt(gamer->board_size);
         if (player_one(gamer, key) == -1)
         {
             free(gamer);

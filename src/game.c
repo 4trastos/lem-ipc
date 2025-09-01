@@ -1,39 +1,37 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
-void    place_player_randomly(t_gamer *gamer)
+void    place_player_randomly(t_gamer *player)
 {
     struct sembuf   spos;
     int             x;
     int             y;
-    int             board_dim;
     bool            found_spot;
 
     found_spot = false;
-    board_dim = (int)sqrt(gamer->board_size);
 
     spos.sem_num = 0;
     spos.sem_op = -1;
     spos.sem_flg = 0;
-    semop(gamer->semid, &spos, 1);
+    semop(player->semid, &spos, 1);
 
     srand(time(NULL) + getgid());
     while (!found_spot)
     {
-        x = rand() % board_dim;
-        y = rand() % board_dim;
-        if (gamer->board_ptr[y * board_dim + x] == 0)
+        x = rand() % player->board_dim;
+        y = rand() % player->board_dim;
+        if (player->board_ptr[y * player->board_dim + x] == 0)
         {
-            gamer->x = x;
-            gamer->y = y;
-            gamer->board_ptr[y * board_dim + x] = gamer->team_id;
+            player->x = x;
+            player->y = y;
+            player->board_ptr[y * player->board_dim + x] = player->team_id;
             found_spot = true;
         }
     }
     
-    ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", gamer->player, gamer->team_id, gamer->x, gamer->y);
+    ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", player->player, player->team_id, player->x, player->y);
     spos.sem_op = 1;
-    semop(gamer->semid, &spos, 1);
+    semop(player->semid, &spos, 1);
 
 }
 
@@ -54,9 +52,9 @@ void    play_turn(t_gamer *gamer)
     }
 
     ft_printf("Player: %d, team: %d. Board access granted.\n", gamer->player, gamer->team_id);
-    read_the_board(gamer);
+    /* read_the_board(gamer);
     if (gamer->alive)
-        ft_move(gamer);
+        ft_move(gamer); */
     // 1. Leer el estado del tablero desde la memoria compartida para detectar enemigos, aliados.
     // ****** Paso 2: Lógica de la Muerte: 
     // 2.1. Detectar si está rodeado por dos o más enemigos. Si es así, debe salir del bucle y del proceso.
@@ -80,7 +78,7 @@ void    play_turn(t_gamer *gamer)
     ft_printf("Player: %d, Team:%d. Board released\n", gamer->player, gamer->team_id);
 
     // 5. Comunicarse con su equipo a través de la cola de mensajes si es necesario (por ejemplo, para coordinar un ataque).
-    send_message(gamer);
+    //send_message(gamer);
     usleep(100000);
 }
 

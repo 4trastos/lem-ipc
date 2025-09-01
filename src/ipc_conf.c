@@ -16,7 +16,8 @@ int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 
 int    player_one(t_gamer *gamer, key_t  key)
 {
-    t_gamer              *aux;
+    t_gamer             *aux;
+    int                 player_count;
     union semaphunion   arg;
     struct sembuf       sops;
 
@@ -28,7 +29,8 @@ int    player_one(t_gamer *gamer, key_t  key)
         return (-1);
     }
 
-    memset(aux->board_ptr, 0, aux->board_size);
+    ft_memset(aux->board_ptr, 0, aux->board_size);
+    ft_memcpy(aux->board_ptr, &aux->board_dim, sizeof(int));
     
     aux->semid = semget(key, 1, IPC_CREAT | 0666);
     if (aux->semid == -1)
@@ -55,8 +57,12 @@ int    player_one(t_gamer *gamer, key_t  key)
     sops.sem_op = -1;
     sops.sem_flg = 0;
     semop(aux->semid, &sops, 1);
-    aux->board_ptr[0]++;
-    aux->player = aux->board_ptr[0];
+
+    player_count = *(int *)(aux->board_ptr + sizeof(int));
+    player_count = player_count + 1;
+    *(int *)(aux->board_ptr + sizeof(int)) = player_count;
+    aux->player = player_count;
+    
     sops.sem_op = 1;
     semop(aux->semid, &sops, 1);
 
@@ -66,8 +72,9 @@ int    player_one(t_gamer *gamer, key_t  key)
 
 int    other_player(t_gamer *gamer, key_t key)
 {
-    struct sembuf   sops;
     t_gamer         *aux;
+    int             player_count;
+    struct sembuf   sops;
 
     aux = gamer;
     aux->shmid = shmget(key, 0, 0);                                     // Unirse a la memoria compartida existente
@@ -77,6 +84,10 @@ int    other_player(t_gamer *gamer, key_t key)
         ft_printf("Error: shmat failed\n");
         return (-1);
     }
+
+    ft_memcpy(&aux->board_dim, aux->board_ptr, sizeof(int));
+    aux->board_size = aux->board_dim * aux->board_dim;
+
     aux->semid = semget(key, 0, 0);                                     // Unirse al semaforo existente
     if (aux->semid == -1)
     {
@@ -88,8 +99,12 @@ int    other_player(t_gamer *gamer, key_t key)
     sops.sem_op = -1;
     sops.sem_flg = 0;
     semop(aux->semid, &sops, 1);
-    aux->board_ptr[0]++;
-    aux->player = aux->board_ptr[0];
+
+    player_count = *(int *)(aux->board_ptr + sizeof(int));
+    player_count = player_count + 1;
+    *(int *)(aux->board_ptr + sizeof(int)) = player_count;
+    aux->player = player_count;
+
     sops.sem_op = 1;
     semop(aux->semid, &sops, 1);
 

@@ -33,6 +33,7 @@ typedef struct s_gamer
     int             msgid;          // Colas de Mensajes
     unsigned char   *board_ptr;     // RAM
     int             board_size;     // Tamaño tablero
+    int             board_dim;       // Tamaño del lateral del tablero
     int             x;              // Posición X en tablero
     int             y;              // Posición Y en tablero
     bool            alive;          // Vivo o Muerto
@@ -54,5 +55,7 @@ void    clearmemsem(t_gamer *gamer);
 //*** auxiliary functions ***
 int     ft_gameratoi(char *str);
 int     argument_parsing(char **argv, int *board);
+void    *ft_memset(void *s, int c, size_t n);
+void    *ft_memcpy(void *dst, const void *sc, size_t n);
 
 #endif
