@@ -1,13 +1,48 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
+void    place_player_randomly(t_gamer *gamer)
+{
+    struct sembuf   spos;
+    int             x;
+    int             y;
+    int             board_dim;
+    bool            found_spot;
+
+    found_spot = false;
+    board_dim = (int)sqrt(gamer->board_size);
+
+    spos.sem_num = 0;
+    spos.sem_op = -1;
+    spos.sem_flg = 0;
+    semop(gamer->semid, &spos, 1);
+
+    srand(time(NULL) + getgid());
+    while (!found_spot)
+    {
+        x = rand() % board_dim;
+        y = rand() % board_dim;
+        if (gamer->board_ptr[y * board_dim + x] == 0)
+        {
+            gamer->x = x;
+            gamer->y = y;
+            gamer->board_ptr[y * board_dim + x] = gamer->team_id;
+            found_spot = true;
+        }
+    }
+    
+    ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", gamer->player, gamer->team_id, gamer->x, gamer->y);
+    spos.sem_op = 1;
+    semop(gamer->semid, &spos, 1);
+
+}
+
 void    play_turn(t_gamer *gamer)
 {
     struct sembuf   sops;
 
     ft_printf("Player: %d, Team: %d. Attempted to access the dashboard...\n", gamer->player, gamer->team_id);
 
-    // --- BLOQUEAR EL SEMÁFORO ---
     sops.sem_num = 0;       // Usamos el semáforo 0
     sops.sem_op = -1;       // Operación de bloqueo (-1)
     sops.sem_flg = 0;       // Sin flags especiales
@@ -19,26 +54,19 @@ void    play_turn(t_gamer *gamer)
     }
 
     ft_printf("Player: %d, team: %d. Board access granted.\n", gamer->player, gamer->team_id);
-
-    // --- SECCIÓN CRÍTICA ---
-    // Esta es la única parte del código donde se manipula el tablero.
-    // Solo un proceso puede estar aquí a la vez.
-    
-    // Aquí iría tu lógica de juego
-    // Por ejemplo:
-    // 1. Leer el tablero para encontrar una posición vacía o un enemigo
+    read_the_board(gamer);
+    if (gamer->alive)
+        ft_move(gamer);
+    // 1. Leer el estado del tablero desde la memoria compartida para detectar enemigos, aliados.
     // ****** Paso 2: Lógica de la Muerte: 
     // 2.1. Detectar si está rodeado por dos o más enemigos. Si es así, debe salir del bucle y del proceso.
     // 2.2. Si no está rodeado, decidir su próximo movimiento. La IA debe ser simple: moverse hacia el enemigo más cercano.
     // 3. Mover el jugador a una nueva posición
     // 4. Escribir (Actualizar) el tablero con su nueva posición y su número de equipo.
 
-    // Por ahora, solo simulo que el jugador está haciendo algo
-
     ft_printf("Player: %d, Team: %d. Manipulating the board...\n", gamer->player, gamer->team_id);
     sleep(1);       // Simulo el tiempo que toma la operación
 
-    // --- LIBERAR EL SEMÁFORO ---
     sops.sem_num = 0;
     sops.sem_op = 1;
     sops.sem_flg = 0;
@@ -52,7 +80,8 @@ void    play_turn(t_gamer *gamer)
     ft_printf("Player: %d, Team:%d. Board released\n", gamer->player, gamer->team_id);
 
     // 5. Comunicarse con su equipo a través de la cola de mensajes si es necesario (por ejemplo, para coordinar un ataque).
-    // 6. Pausar el proceso por un momento (usleep) para no monopolizar el procesador.
+    send_message(gamer);
+    usleep(100000);
 }
 
 

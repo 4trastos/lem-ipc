@@ -43,6 +43,7 @@ typedef struct s_gamer
 //*** gamer functions ***
 void    play_turn(t_gamer *gamer);
 void    place_player_randomly(t_gamer *gamer);
+void    read_the_board(t_gamer *game);
 
 //*** explicit functions ***
 int     ft_resconf(t_gamer *gamer, key_t key, int board);

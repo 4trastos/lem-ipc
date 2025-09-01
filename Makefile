@@ -2,9 +2,10 @@ NAME = lemipc
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -g
 RM = rm -f
+LIB = -lm -lftprintf
 
 SRC = src/main.c src/game.c src/player.c src/ipc_conf.c src/parse.c src/cleanup.c \
-		src/dead.c src/victory.c 
+		src/readboard.c src/victory.c 
 OBJS = $(SRC:.c=.o)
 
 FT_PRINTF_DIR = lib/printf
@@ -13,7 +14,7 @@ FT_PRINTF = $(FT_PRINTF_DIR)/libftprintf.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(FT_PRINTF)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(FT_PRINTF_DIR) -lftprintf -lm
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(FT_PRINTF_DIR) $(LIB)
 
 $(FT_PRINTF):
 	@make -C $(FT_PRINTF_DIR)

@@ -1,42 +1,6 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
-void    place_player_randomly(t_gamer *gamer)
-{
-    struct sembuf   spos;
-    int             x;
-    int             y;
-    int             board_dim;
-    bool            found_spot;
-
-    found_spot = false;
-    board_dim = (int)sqrt(gamer->board_size);
-
-    spos.sem_num = 0;
-    spos.sem_op = -1;
-    spos.sem_flg = 0;
-    semop(gamer->semid, &spos, 1);
-
-    srand(time(NULL) + getgid());
-    while (!found_spot)
-    {
-        x = rand() % board_dim;
-        y = rand() % board_dim;
-        if (gamer->board_ptr[y * board_dim + x] == 0)
-        {
-            gamer->x = x;
-            gamer->y = y;
-            gamer->board_ptr[y * board_dim + x] = gamer->team_id;
-            found_spot = true;
-        }
-    }
-    
-    ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", gamer->player, gamer->team_id, gamer->x, gamer->y);
-    spos.sem_op = 1;
-    semop(gamer->semid, &spos, 1);
-
-}
-
 // Verificación si los recursos IPC ya existen
 int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 {
