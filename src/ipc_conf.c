@@ -4,11 +4,8 @@
 // Verificación si los recursos IPC ya existen
 int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 {
-    t_gamer  *aux;
-
-    aux = gamer;
-    aux->shmid = shmget(key, board, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
-    if (aux->shmid == -1)
+    gamer->shmid = shmget(key, board, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
+    if (gamer->shmid == -1)
         return (2);
     else
         return (1);
@@ -16,38 +13,36 @@ int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 
 int    player_one(t_gamer *gamer, key_t  key)
 {
-    t_gamer             *aux;
     int                 player_count;
     union semaphunion   arg;
     struct sembuf       sops;
 
-    aux = gamer;
-    aux->board_ptr = shmat(aux->shmid, NULL, 0);                        // Adjuntar la memoria al proceso
-    if (aux->board_ptr == (void *)-1)
+    gamer->board_ptr = shmat(gamer->shmid, NULL, 0);                        // Adjuntar la memoria al proceso
+    if (gamer->board_ptr == (void *)-1)
     {
         ft_printf("Error: shmat failed\n");
         return (-1);
     }
 
-    ft_memset(aux->board_ptr, 0, aux->board_size);
-    ft_memcpy(aux->board_ptr, &aux->board_dim, sizeof(int));
+    ft_memset(gamer->board_ptr, 0, gamer->board_size);
+    ft_memcpy(gamer->board_ptr, &gamer->board_dim, sizeof(int));
     
-    aux->semid = semget(key, 1, IPC_CREAT | 0666);
-    if (aux->semid == -1)
+    gamer->semid = semget(key, 1, IPC_CREAT | 0666);
+    if (gamer->semid == -1)
     {
         ft_printf("Error: semget failed\n");
         return (-1);
     }
     
     arg.val = 1;
-    if (semctl(aux->semid, 0, SETVAL, arg) == -1)
+    if (semctl(gamer->semid, 0, SETVAL, arg) == -1)
     {
         ft_printf("Error: semctl failed\n");
         return (-1);
     }
     
-    aux->msgid = msgget(key, IPC_CREAT | IPC_EXCL | 0666);
-    if (aux->msgid == -1)
+    gamer->msgid = msgget(key, IPC_CREAT | IPC_EXCL | 0666);
+    if (gamer->msgid == -1)
     {
         ft_printf("Error: msgget failed\n");
         return (-1);
@@ -56,15 +51,15 @@ int    player_one(t_gamer *gamer, key_t  key)
     sops.sem_num = 0;
     sops.sem_op = -1;
     sops.sem_flg = 0;
-    semop(aux->semid, &sops, 1);
+    semop(gamer->semid, &sops, 1);
 
-    player_count = *(int *)(aux->board_ptr + sizeof(int));
+    player_count = *(int *)(gamer->board_ptr + sizeof(int));
     player_count = player_count + 1;
-    *(int *)(aux->board_ptr + sizeof(int)) = player_count;
-    aux->player = player_count;
+    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
+    gamer->player = player_count;
     
     sops.sem_op = 1;
-    semop(aux->semid, &sops, 1);
+    semop(gamer->semid, &sops, 1);
 
     place_player_randomly(gamer);
     return (0);
@@ -72,24 +67,22 @@ int    player_one(t_gamer *gamer, key_t  key)
 
 int    other_player(t_gamer *gamer, key_t key)
 {
-    t_gamer         *aux;
     int             player_count;
     struct sembuf   sops;
 
-    aux = gamer;
-    aux->shmid = shmget(key, 0, 0);                                     // Unirse a la memoria compartida existente
-    aux->board_ptr = shmat(aux->shmid, NULL, 0);
-    if (aux->board_ptr == (void *)-1)
+    gamer->shmid = shmget(key, 0, 0);                                     // Unirse a la memoria compartida existente
+    gamer->board_ptr = shmat(gamer->shmid, NULL, 0);
+    if (gamer->board_ptr == (void *)-1)
     {
         ft_printf("Error: shmat failed\n");
         return (-1);
     }
 
-    ft_memcpy(&aux->board_dim, aux->board_ptr, sizeof(int));
-    aux->board_size = aux->board_dim * aux->board_dim;
+    ft_memcpy(&gamer->board_dim, gamer->board_ptr, sizeof(int));
+    gamer->board_size = gamer->board_dim * gamer->board_dim;
 
-    aux->semid = semget(key, 0, 0);                                     // Unirse al semaforo existente
-    if (aux->semid == -1)
+    gamer->semid = semget(key, 0, 0);                                     // Unirse al semaforo existente
+    if (gamer->semid == -1)
     {
         ft_printf("Error: semget failed\n");
         return (-1);
@@ -98,18 +91,18 @@ int    other_player(t_gamer *gamer, key_t key)
     sops.sem_num = 0;
     sops.sem_op = -1;
     sops.sem_flg = 0;
-    semop(aux->semid, &sops, 1);
+    semop(gamer->semid, &sops, 1);
 
-    player_count = *(int *)(aux->board_ptr + sizeof(int));
+    player_count = *(int *)(gamer->board_ptr + sizeof(int));
     player_count = player_count + 1;
-    *(int *)(aux->board_ptr + sizeof(int)) = player_count;
-    aux->player = player_count;
+    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
+    gamer->player = player_count;
 
     sops.sem_op = 1;
-    semop(aux->semid, &sops, 1);
+    semop(gamer->semid, &sops, 1);
 
-    aux->msgid = msgget(key, 0);                                        // Unirse a la cola de mensajes existente
-    if (aux->msgid == -1)
+    gamer->msgid = msgget(key, 0);                                        // Unirse a la cola de mensajes existente
+    if (gamer->msgid == -1)
     {
         ft_printf("Error: msgget failed\n");
         return (-1);

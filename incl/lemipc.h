@@ -31,14 +31,15 @@ typedef struct s_gamer
     int             shmid;          // ID Memoria Compartida
     int             semid;          // Semaforos
     int             msgid;          // Colas de Mensajes
-    unsigned char   *board_ptr;     // RAM
     int             board_size;     // Tamaño tablero
-    int             board_dim;       // Tamaño del lateral del tablero
+    int             board_dim;      // Tamaño del lateral del tablero
     int             x;              // Posición X en tablero
     int             y;              // Posición Y en tablero
+    unsigned char   *board_ptr;     // RAM
     bool            alive;          // Vivo o Muerto
     bool            victory;        // Victoria de equipo
     pid_t           pid;            // Proceso
+    char            padding[6];     // Padding explícito (Alineado a 64bits) Total: 56 bytes (múltiplo de 8)
 }   t_gamer;
 
 //*** gamer functions ***
