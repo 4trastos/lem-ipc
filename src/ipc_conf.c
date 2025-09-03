@@ -55,8 +55,8 @@ int    player_one(t_gamer *gamer, key_t  key)
 
     player_count = *(int *)(gamer->board_ptr + sizeof(int));
     player_count = player_count + 1;
-    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
     gamer->player = player_count;
+    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
     
     sops.sem_op = 1;
     semop(gamer->semid, &sops, 1);
@@ -95,8 +95,8 @@ int    other_player(t_gamer *gamer, key_t key)
 
     player_count = *(int *)(gamer->board_ptr + sizeof(int));
     player_count = player_count + 1;
-    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
     gamer->player = player_count;
+    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
 
     sops.sem_op = 1;
     semop(gamer->semid, &sops, 1);
