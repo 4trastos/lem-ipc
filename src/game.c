@@ -51,9 +51,11 @@ void    play_turn(t_gamer *gamer)
     }
 
     ft_printf("Player: %d, team: %d. Board access granted.\n", gamer->player, gamer->team_id);
-    read_the_board(gamer);
-    if (gamer->alive)
-        ft_move(gamer);
+    ft_move(gamer);
+    if (gamer->alive == false)
+        ft_printf("You're dead!!\n");
+    if (gamer->victory == true)
+        ft_printf("You Win\n");
     // 1. Leer el estado del tablero desde la memoria compartida para detectar enemigos, aliados.
     
     // ****** Paso 2: Lógica de la Muerte: 

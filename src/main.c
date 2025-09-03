@@ -32,6 +32,7 @@ int main(int argc, char **argv)
     gamer->pid = pid;
     gamer->team_id = ft_gameratoi(argv[1]);
     gamer->alive = true;
+    gamer->victory = false;
     player = ft_resconf(gamer, key, board);
     if (player == 1)
     {
