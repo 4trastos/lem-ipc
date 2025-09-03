@@ -52,6 +52,8 @@ int     ft_resconf(t_gamer *gamer, key_t key, int board);
 int     player_one(t_gamer *gamer, key_t  key);
 int     other_player(t_gamer *gamer, key_t key);
 void    clearmemsem(t_gamer *gamer);
+void    enemy_target(t_gamer *player, int target_y, int target_x, int distance);
+void    ft_move(t_gamer *player);
 
 //*** auxiliary functions ***
 int     ft_gameratoi(char *str);

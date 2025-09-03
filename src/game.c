@@ -15,7 +15,7 @@ void    place_player_randomly(t_gamer *player)
     spos.sem_flg = 0;
     semop(player->semid, &spos, 1);
 
-    srand(time(NULL) + getgid());
+    srand(time(NULL) + player->pid);
     while (!found_spot)
     {
         x = rand() % player->board_dim;
@@ -32,7 +32,6 @@ void    place_player_randomly(t_gamer *player)
     ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", player->player, player->team_id, player->x, player->y);
     spos.sem_op = 1;
     semop(player->semid, &spos, 1);
-
 }
 
 void    play_turn(t_gamer *gamer)
@@ -52,10 +51,11 @@ void    play_turn(t_gamer *gamer)
     }
 
     ft_printf("Player: %d, team: %d. Board access granted.\n", gamer->player, gamer->team_id);
-    /* read_the_board(gamer);
+    read_the_board(gamer);
     if (gamer->alive)
-        ft_move(gamer); */
+        ft_move(gamer);
     // 1. Leer el estado del tablero desde la memoria compartida para detectar enemigos, aliados.
+    
     // ****** Paso 2: Lógica de la Muerte: 
     // 2.1. Detectar si está rodeado por dos o más enemigos. Si es así, debe salir del bucle y del proceso.
     // 2.2. Si no está rodeado, decidir su próximo movimiento. La IA debe ser simple: moverse hacia el enemigo más cercano.
