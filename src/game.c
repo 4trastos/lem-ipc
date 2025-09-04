@@ -56,13 +56,6 @@ void    play_turn(t_gamer *gamer)
         ft_printf("You're dead!!\n");
     if (gamer->victory == true)
         ft_printf("You Win\n");
-    // 1. Leer el estado del tablero desde la memoria compartida para detectar enemigos, aliados.
-    
-    // ****** Paso 2: Lógica de la Muerte: 
-    // 2.1. Detectar si está rodeado por dos o más enemigos. Si es así, debe salir del bucle y del proceso.
-    // 2.2. Si no está rodeado, decidir su próximo movimiento. La IA debe ser simple: moverse hacia el enemigo más cercano.
-    // 3. Mover el jugador a una nueva posición
-    // 4. Escribir (Actualizar) el tablero con su nueva posición y su número de equipo.
 
     ft_printf("Player: %d, Team: %d. Manipulating the board...\n", gamer->player, gamer->team_id);
     sleep(1);       // Simulo el tiempo que toma la operación
