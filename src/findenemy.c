@@ -3,36 +3,44 @@
 
 bool    surrounded(t_gamer *gamer)
 {
-    int limits;
-    int blocked_count;
+    int     y;
+    int     x;
+    int     team_id;
+    int     team_counts[100];
+    bool    is_surrounded;
 
-    limits = gamer->board_dim;
-    blocked_count = 0;
+    is_surrounded = false;
+    ft_memset(team_counts, 0, sizeof(team_counts));
 
-    if ((gamer->x + 1 < limits) && (gamer->board_ptr[gamer->y * limits + gamer->x + 1] != 0))
-        blocked_count++;
-    if ((gamer->x - 1 >= 0) && (gamer->board_ptr[gamer->y * limits + gamer->x - 1] != 0))
-        blocked_count++;
-    if ((gamer->y + 1 < limits) && (gamer->board_ptr[(gamer->y + 1) * limits + gamer->x] != 0))
-        blocked_count++;
-    if ((gamer->y - 1 >= 0) && (gamer->board_ptr[(gamer->y -1) * limits + gamer->x] != 0))
-        blocked_count++;
-    if ((gamer->x + 1 < limits) && (gamer->y + 1 < limits) && (gamer->board_ptr[(gamer->y + 1) * limits + gamer->x + 1] != 0))
-        blocked_count++;
-    if ((gamer->x + 1 < limits) && (gamer->y - 1 >= 0) && (gamer->board_ptr[(gamer->y - 1) * limits + gamer->x + 1] != 0))
-        blocked_count++;
-    if ((gamer->x - 1 >= 0) && (gamer->y + 1 < limits) && (gamer->board_ptr[(gamer->y + 1) * limits + gamer->x - 1] != 0))
-        blocked_count++;
-    if ((gamer->x - 1 >= 0) && (gamer->y - 1 >= 0) && (gamer->board_ptr[(gamer->y - 1) * limits + gamer->x - 1] != 0))
-        blocked_count++;
-    if (blocked_count >= 7)
+    for (y = gamer->y - 1; y <= gamer->y + 1; y++)
+    {
+        for (x = gamer->x -1; x <= gamer->x + 1; x++)
+        {
+             if (y >= 0 && y < gamer->board_dim && x >= 0 && x < gamer->board_dim
+                && (y != gamer->y && x != gamer->x))
+            {
+                team_id = gamer->board_ptr[y * gamer->board_dim + x];
+                if (team_id != 0 && team_id != gamer->team_id)
+                    team_counts[team_id]++;
+            }
+        }
+    }
+    
+    for (int i = 0; i < sizeof(team_counts); i++)
+    {
+        if (team_counts[i] >= 2)
+        {
+            is_surrounded = true;
+            break;;
+        }
+    }
+
+    if (is_surrounded)
     {
         gamer->alive = false;
+        gamer->board_ptr[y * gamer->board_dim + x] = 0;
         ft_printf("Player: %d - Team: %d is surrounded and eliminated.\n", gamer->player, gamer->team_id);
-        return (true);
     }
-    else
-        return (false);
 }
 
 void    ft_move(t_gamer *gamer)

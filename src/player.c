@@ -10,15 +10,20 @@ void    to_moveplayer(t_gamer *gamer, int target_y, int target_x)
     int new_y;
 
     limits = gamer->board_dim;
-    if (target_x > gamer->x)
-        step_x = 1;
-    else if (target_x < gamer->x)
-        step_x = -1;
-
-    if (target_y > gamer->y)
-        step_y = 1;
-    else if (target_y < gamer->y)
-        step_y = -1;
+    if (abs(gamer->x - target_x) > abs(gamer->y - target_y))
+    {
+        if (target_x > gamer->x)
+            step_x = 1;
+        else if (target_x < gamer->x)
+            step_x = -1;
+    }
+    else
+    {
+        if (target_y > gamer->y)
+            step_y = 1;
+        else if (target_y < gamer->y)
+            step_y = -1;
+    }
 
     new_y = gamer->y + step_y;
     new_x = gamer->x + step_x;
