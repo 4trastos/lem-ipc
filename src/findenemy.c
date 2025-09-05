@@ -17,7 +17,7 @@ bool    surrounded(t_gamer *gamer)
         for (x = gamer->x -1; x <= gamer->x + 1; x++)
         {
              if (y >= 0 && y < gamer->board_dim && x >= 0 && x < gamer->board_dim
-                && (y != gamer->y && x != gamer->x))
+                && (y != gamer->y || x != gamer->x))
             {
                 team_id = gamer->board_ptr[y * gamer->board_dim + x];
                 if (team_id != 0 && team_id != gamer->team_id)
@@ -26,12 +26,12 @@ bool    surrounded(t_gamer *gamer)
         }
     }
     
-    for (int i = 0; i < sizeof(team_counts); i++)
+    for (size_t i = 0; i < sizeof(team_counts); i++)
     {
         if (team_counts[i] >= 2)
         {
             is_surrounded = true;
-            break;;
+            break;
         }
     }
 
@@ -41,6 +41,7 @@ bool    surrounded(t_gamer *gamer)
         gamer->board_ptr[y * gamer->board_dim + x] = 0;
         ft_printf("Player: %d - Team: %d is surrounded and eliminated.\n", gamer->player, gamer->team_id);
     }
+    return (is_surrounded);
 }
 
 void    ft_move(t_gamer *gamer)

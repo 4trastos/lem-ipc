@@ -53,8 +53,8 @@ int     player_one(t_gamer *gamer, key_t  key);
 int     other_player(t_gamer *gamer, key_t key);
 void    clearmemsem(t_gamer *gamer);
 void    ft_move(t_gamer *player);
-bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x, int *enemies);
-void    to_moveplayer(gamer, target_y, target_x);
+bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x);
+void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
 
 //*** auxiliary functions ***
 int     ft_gameratoi(char *str);
