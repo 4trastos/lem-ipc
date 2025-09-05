@@ -3,23 +3,9 @@
 
 int get_total_players(t_gamer *gamer)
 {
-    struct sembuf   spos;
-    int             player_count;
-
-    spos.sem_num = 0;
-    spos.sem_op = -1;
-    spos.sem_flg = 0;
-    if (semop(gamer->semid, &spos, 1) == -1)
-    {
-        ft_printf("Error: semop failed in get_total_players (lock)\n");
-        return (-1);
-    }
+    int player_count;
 
     player_count = *(int *)(gamer->board_ptr + sizeof(int));
-
-    spos.sem_op = 1;
-    semop(gamer->semid, &spos, 1);
-
     return (player_count);
 }
 
@@ -72,8 +58,7 @@ void    play_turn(t_gamer *gamer)
     }
     ft_printf("Player: %d - Team: %d. Board access granted.\n", gamer->player, gamer->team_id);
     
-    total_players = get_total_players(gamer);
-    if (total_players < 2)
+    if ((total_players = get_total_players(gamer)) < 2)
     {
         ft_printf("Waiting for an opponent. Only %d player on the board.\n", gamer->player);
         usleep(500000);
