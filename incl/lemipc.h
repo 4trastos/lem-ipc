@@ -46,15 +46,17 @@ typedef struct s_gamer
 void    play_turn(t_gamer *gamer);
 void    place_player_randomly(t_gamer *gamer);
 bool    surrounded(t_gamer *gamer);
+void    ft_move(t_gamer *player);
+bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x);
+void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
+bool    check_for_victory(t_gamer *gamer);
 
 //*** explicit functions ***
 int     ft_resconf(t_gamer *gamer, key_t key, int board);
 int     player_one(t_gamer *gamer, key_t  key);
 int     other_player(t_gamer *gamer, key_t key);
 void    clearmemsem(t_gamer *gamer);
-void    ft_move(t_gamer *player);
-bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x);
-void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
+int     get_total_players(t_gamer *gamer);
 
 //*** auxiliary functions ***
 int     ft_gameratoi(char *str);
