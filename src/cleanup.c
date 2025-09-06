@@ -3,15 +3,18 @@
 
 void    clearmemsem(t_gamer *gamer)
 {
-    t_gamer  *aux;
+    int total_player;
 
-    aux = gamer;
-    if (shmctl(aux->shmid, IPC_RMID, 0) == -1)
-        ft_printf("Error: Failed to remove shared memory\n");
-    if (semctl(aux->semid, IPC_RMID, 0) == -1)
-        ft_printf("Error: Failed to remove semaphore\n");
-    if (msgctl(aux->msgid, IPC_RMID, 0) == -1)
-        ft_printf("Error: Failde to remove message queue\n");
+    total_player = *(int *)(gamer->board_ptr + sizeof(int));
+    if (total_player == 1 && gamer->victory == true)
+    {
+        if (shmctl(gamer->shmid, IPC_RMID, 0) == -1)
+            ft_printf("Error: Failed to remove shared memory\n");
+        if (semctl(gamer->semid, IPC_RMID, 0) == -1)
+            ft_printf("Error: Failed to remove semaphore\n");
+        if (msgctl(gamer->msgid, IPC_RMID, 0) == -1)
+            ft_printf("Error: Failde to remove message queue\n");
+    }
 }
 
 // Fase 3: Limpieza de Recursos de IPC

@@ -79,10 +79,17 @@ void    play_turn(t_gamer *gamer)
 
     ft_move(gamer);
     if (gamer->alive == false)
+    {
         ft_printf("Player: %d - Team: %d.You're dead!!\n", gamer->player, gamer->team_id);
+        total_players = *(int *)(gamer->board_ptr + sizeof(int));
+        total_players = total_players - 1;
+        *(int *)(gamer->board_ptr + sizeof(int)) = total_players;
+        sops.sem_op = 1;
+        semop(gamer->semid, &sops, 1);
+        return;
+    }
 
     ft_printf("Player: %d - Team: %d. Manipulating the board...\n", gamer->player, gamer->team_id);
-    sleep(1);
 
     sops.sem_num = 0;
     sops.sem_op = 1;

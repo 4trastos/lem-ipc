@@ -54,15 +54,11 @@ int main(int argc, char **argv)
     }
 
     ft_printf("PID: %d - Team: %d - Player: %d - Key: %d - Board: %d - RAM: %p\n", gamer->pid, gamer->team_id, gamer->player,key ,board, gamer->board_ptr);
-    while (gamer->alive)
-    {
-        play_turn(gamer);
-        // Lógica de la Victoria.
-    }
     
-    // 3. Limpieza de Recursos de IPC
-    //clearmemsem(gamer);
-
+    while (gamer->alive)
+        play_turn(gamer);
+    
+    clearmemsem(gamer);
     free (gamer);
     return (0); 
 }
