@@ -3,45 +3,37 @@
 
 bool    surrounded(t_gamer *gamer)
 {
-    int     y;
-    int     x;
-    int     team_id;
-    int     team_counts[100];
-    bool    is_surrounded;
+    int cell_value;
+    int oponents_team[100];
 
-    is_surrounded = false;
-    ft_memset(team_counts, 0, sizeof(team_counts));
+    ft_memset(oponents_team, 0, sizeof(oponents_team));
 
-    for (y = gamer->y - 1; y <= gamer->y + 1; y++)
+    for (int y = gamer->y - 1; y <= gamer->y + 1; y++)
     {
-        for (x = gamer->x -1; x <= gamer->x + 1; x++)
+        for (int x = gamer->x -1; x <= gamer->x + 1; x++)
         {
              if (y >= 0 && y < gamer->board_dim && x >= 0 && x < gamer->board_dim
                 && (y != gamer->y || x != gamer->x))
             {
-                team_id = gamer->board_ptr[y * gamer->board_dim + x];
-                if (team_id != 0 && team_id != gamer->team_id)
-                    team_counts[team_id]++;
+                cell_value = gamer->board_ptr[y * gamer->board_dim + x];
+                if (cell_value != 0 && cell_value != gamer->team_id)
+                    oponents_team[cell_value]++;
             }
         }
     }
     
     for (size_t i = 0; i < 100; i++)
     {
-        if (team_counts[i] >= 2)
+        if (oponents_team[i] >= 2)
         {
-            is_surrounded = true;
-            break;
+            gamer->alive = false;
+            gamer->board_ptr[gamer->y * gamer->board_dim + gamer->x] = 0;
+            ft_printf("Player: %d - Team: %d is surrounded and eliminated.\n", gamer->player, gamer->team_id);
+            return (true);
         }
     }
 
-    if (is_surrounded)
-    {
-        gamer->alive = false;
-        gamer->board_ptr[gamer->y * gamer->board_dim + gamer->x] = 0;
-        ft_printf("Player: %d - Team: %d is surrounded and eliminated.\n", gamer->player, gamer->team_id);
-    }
-    return (is_surrounded);
+    return (false);
 }
 
 void    ft_move(t_gamer *gamer)
