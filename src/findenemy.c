@@ -1,7 +1,7 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
-bool    surrounded(t_gamer *gamer)
+bool    is_surrounded(t_gamer *gamer)
 {
     int cell_value;
     int oponents_team[100];
@@ -41,28 +41,29 @@ void    ft_move(t_gamer *gamer)
     int target_y;
     int target_x;
 
-    if (surrounded(gamer))
+    if (is_surrounded(gamer))
         return;
     if (find_enemy_target(gamer, &target_y, &target_x))
+    {
         to_moveplayer(gamer, target_y, target_x);
+        send_message(gamer, target_x, target_y);
+    }
     else
         ft_printf("Waiting for an opponent\n");
 }
 
 bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
 {
-    int     y;
-    int     x;
     int     cell_value;
     int     enemy_distance;
     int     min_distance;
-    bool    found_enemy;    
+    bool    found_target;    
 
     min_distance = INT_MAX;
     cell_value = 0;
-    for (y = 0; y < gamer->board_dim; y++)
+    for (int y = 0; y < gamer->board_dim; y++)
     {
-        for (x = 0; x < gamer->board_dim; x++)
+        for (int x = 0; x < gamer->board_dim; x++)
         {
             cell_value = gamer->board_ptr[y * gamer->board_dim + x];
             if (cell_value != gamer->team_id && cell_value != 0)
@@ -73,10 +74,10 @@ bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
                     min_distance = enemy_distance;
                     *target_y = y;
                     *target_x = x;
-                    found_enemy = true;
+                    found_target = true;
                 }
             }
         }
     }
-    return (found_enemy);
+    return (found_target);
 }

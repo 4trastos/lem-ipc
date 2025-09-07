@@ -21,7 +21,7 @@ void    place_player_randomly(t_gamer *player)
     spos.sem_num = 0;
     spos.sem_op = -1;
     spos.sem_flg = 0;
-    semop(player->semid, &spos, 1);
+    semop(player->sem_id, &spos, 1);
 
     srand(time(NULL) + player->pid);
     while (!found_spot)
@@ -39,7 +39,7 @@ void    place_player_randomly(t_gamer *player)
     
     ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", player->player, player->team_id, player->x, player->y);
     spos.sem_op = 1;
-    semop(player->semid, &spos, 1);
+    semop(player->sem_id, &spos, 1);
 }
 
 void    play_turn(t_gamer *gamer)
@@ -51,7 +51,7 @@ void    play_turn(t_gamer *gamer)
     sops.sem_num = 0;
     sops.sem_op = -1;
     sops.sem_flg = 0;
-    if (semop(gamer->semid, &sops, 1) == -1)
+    if (semop(gamer->sem_id, &sops, 1) == -1)
     {
         ft_printf("Error: semop failed (lock)\n");
         return;
@@ -63,7 +63,7 @@ void    play_turn(t_gamer *gamer)
         ft_printf("Waiting for an opponent. Only %d player on the board.\n", gamer->player);
         usleep(500000);
         sops.sem_op = 1;
-        semop(gamer->semid, &sops, 1);
+        semop(gamer->sem_id, &sops, 1);
         return;
     }
 
@@ -73,7 +73,7 @@ void    play_turn(t_gamer *gamer)
         ft_printf("Player: %d - Team: %d. YOU WIN!!!\n", gamer->player, gamer->team_id);
         gamer->alive = false;
         sops.sem_op = 1;
-        semop(gamer->semid, &sops, 1);
+        semop(gamer->sem_id, &sops, 1);
         return;
     }
 
@@ -83,7 +83,7 @@ void    play_turn(t_gamer *gamer)
         ft_printf("Player: %d - Team: %d.You're dead!!\n", gamer->player, gamer->team_id);
         *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
         sops.sem_op = 1;
-        semop(gamer->semid, &sops, 1);
+        semop(gamer->sem_id, &sops, 1);
         return;
     }
 
@@ -92,15 +92,12 @@ void    play_turn(t_gamer *gamer)
     sops.sem_num = 0;
     sops.sem_op = 1;
     sops.sem_flg = 0;
-    if (semop(gamer->semid, &sops, 1) == -1)
+    if (semop(gamer->sem_id, &sops, 1) == -1)
     {
         ft_printf("Error: semop failed (unlock)\n");
         return;
     }
 
     ft_printf("Player: %d - Team:%d. Board released\n", gamer->player, gamer->team_id);
-
-    // 5. Comunicarse con su equipo a través de la cola de mensajes si es necesario (por ejemplo, para coordinar un ataque).
-    //send_message(gamer);
     usleep(100000);
 }

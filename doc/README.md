@@ -36,7 +36,7 @@ La memoria compartida es el mecanismo de IPC más rápido porque una vez que se 
 int shmget(key_t key, size_t size, int shmflg);
 ```
 
-* **Propósito:** devuelve un identificador de segmento de memoria compartida (`shmid`).
+* **Propósito:** devuelve un identificador de segmento de memoria compartida (`shm_id`).
 * **Parámetros:**
 
   * `key`: la clave obtenida con `ftok`.
@@ -49,11 +49,11 @@ int shmget(key_t key, size_t size, int shmflg);
 ### Paso 2: Adjuntar la Memoria (`shmat`)
 
 ```c
-void *shmat(int shmid, const void *shmaddr, int shmflg);
+void *shmat(int shm_id, const void *shmaddr, int shmflg);
 ```
 
 * **Propósito:** adjunta el segmento al espacio de direcciones del proceso y devuelve un puntero.
-* `shmid`: el ID obtenido con `shmget`.
+* `shm_id`: el ID obtenido con `shmget`.
 * `shmaddr`: normalmente `NULL`.
 
 ### Paso 3: Manipular la Memoria
@@ -77,13 +77,13 @@ int *board = (int*)shmat(...);
 * `shmctl`:
 
   ```c
-  int shmctl(int shmid, int cmd, struct shmid_ds *buf);
+  int shmctl(int shm_id, int cmd, struct shm_id_ds *buf);
   ```
 
   Para eliminar:
 
   ```c
-  shmctl(shmid, IPC_RMID, NULL);
+  shmctl(shm_id, IPC_RMID, NULL);
   ```
 
 📚 Documentación: `man 2 shmget`, `man 2 shmat`, `man 2 shmctl`
@@ -100,14 +100,14 @@ Los semáforos controlan el acceso a un recurso compartido. En **lem-ipc**, evit
 int semget(key_t key, int nsems, int semflg);
 ```
 
-* **Propósito:** devuelve un ID de conjunto de semáforos (`semid`).
+* **Propósito:** devuelve un ID de conjunto de semáforos (`sem_id`).
 * Para lem-ipc solo necesitas **1**, así que `nsems = 1`.
 * `semflg`: igual que en `shmget`.
 
 ### Paso 2: Inicializar el Semáforo (`semctl`)
 
 ```c
-int semctl(int semid, int semnum, int cmd, ...);
+int semctl(int sem_id, int semnum, int cmd, ...);
 ```
 
 * **Propósito:** controla el semáforo.
@@ -119,7 +119,7 @@ int semctl(int semid, int semnum, int cmd, ...);
 ### Paso 3: Bloquear y Desbloquear (`semop`)
 
 ```c
-int semop(int semid, struct sembuf *sops, size_t nsops);
+int semop(int sem_id, struct sembuf *sops, size_t nsops);
 ```
 
 * **Propósito:** modifica el valor del semáforo.
@@ -133,13 +133,13 @@ Ejemplo de bloqueo:
 
 ```c
 struct sembuf op = {0, -1, 0};
-semop(semid, &op, 1);
+semop(sem_id, &op, 1);
 ```
 
 ### Paso 4: Limpiar
 
 ```c
-semctl(semid, 0, IPC_RMID);
+semctl(sem_id, 0, IPC_RMID);
 ```
 
 📚 Documentación: `man 2 semget`, `man 2 semctl`, `man 2 semop`
@@ -196,9 +196,9 @@ msgctl(msqid, IPC_RMID, NULL);
 ### Jugador 1
 
 1. `ftok` → `key_t`
-2. `shmget (IPC_CREAT | IPC_EXCL)` → `shmid`
-3. `semget (IPC_CREAT | IPC_EXCL)` → `semid`
-4. `msgget (IPC_CREAT | IPC_EXCL)` → `msgid`
+2. `shmget (IPC_CREAT | IPC_EXCL)` → `shm_id`
+3. `semget (IPC_CREAT | IPC_EXCL)` → `sem_id`
+4. `msgget (IPC_CREAT | IPC_EXCL)` → `msg_id`
 5. `semctl` inicializa el semáforo a 1.
 6. `shmat` → `board_ptr`
 7. Inicia bucle de juego.
@@ -207,9 +207,9 @@ msgctl(msqid, IPC_RMID, NULL);
 ### Jugadores siguientes
 
 1. `ftok` → `key_t`
-2. `shmget (IPC_CREAT)` → `shmid`
-3. `semget (IPC_CREAT)` → `semid`
-4. `msgget (IPC_CREAT)` → `msgid`
+2. `shmget (IPC_CREAT)` → `shm_id`
+3. `semget (IPC_CREAT)` → `sem_id`
+4. `msgget (IPC_CREAT)` → `msg_id`
 5. `shmat` → `board_ptr`
 6. Inicia bucle de juego.
 7. Al finalizar: solo `shmdt`. No deben eliminar los recursos.

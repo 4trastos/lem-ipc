@@ -8,11 +8,11 @@ void    clearmemsem(t_gamer *gamer)
     total_player = *(int *)(gamer->board_ptr + sizeof(int));
     if (total_player == 1 && gamer->victory == true)
     {
-        if (shmctl(gamer->shmid, IPC_RMID, 0) == -1)
+        if (shmctl(gamer->shm_id, IPC_RMID, 0) == -1)
             ft_printf("Error: Failed to remove shared memory\n");
-        if (semctl(gamer->semid, IPC_RMID, 0) == -1)
+        if (semctl(gamer->sem_id, IPC_RMID, 0) == -1)
             ft_printf("Error: Failed to remove semaphore\n");
-        if (msgctl(gamer->msgid, IPC_RMID, 0) == -1)
+        if (msgctl(gamer->msg_id, IPC_RMID, 0) == -1)
             ft_printf("Error: Failde to remove message queue\n");
     }
 }
@@ -41,6 +41,6 @@ Consideraciones Adicionales
     - Gestión de Errores: Todos los IPC pueden fallar. 
     Asegúrate de manejar los errores adecuadamente y salir del programa de forma segura (exit(1)).
     - Variables Globales: Utiliza variables globales para los identificadores de los recursos IPC 
-    (shmid, semid, msgid) y las direcciones de la memoria compartida.
+    (shm_id, sem_id, msg_id) y las direcciones de la memoria compartida.
     Modo de Visualización: Implementa la visualización del tablero en modo texto. 
     Puedes imprimir el tablero con los números de los equipos. */
