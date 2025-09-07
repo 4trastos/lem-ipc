@@ -49,7 +49,7 @@ void    ft_move(t_gamer *gamer)
         send_message(gamer, target_x, target_y);
     }
     else
-        ft_printf("Waiting for an opponent\n");
+        ft_printf("⚠️ Waiting for an opponent ⚠️\n");
 }
 
 bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)

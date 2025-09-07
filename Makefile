@@ -5,7 +5,7 @@ RM = rm -f
 LIB = -lm -lftprintf
 
 SRC = src/main.c src/game.c src/player.c src/ipc_conf.c src/parse.c src/cleanup.c \
-		src/findenemy.c src/victory.c  src/auxiliar.c
+		src/findenemy.c src/victory.c  src/auxiliar.c src/message_queue.c
 OBJS = $(SRC:.c=.o)
 
 FT_PRINTF_DIR = lib/printf

@@ -53,14 +53,14 @@ void    play_turn(t_gamer *gamer)
     sops.sem_flg = 0;
     if (semop(gamer->sem_id, &sops, 1) == -1)
     {
-        ft_printf("Error: semop failed (lock)\n");
+        ft_printf("❌ Error: semop failed (lock) ❌\n");
         return;
     }
     ft_printf("Player: %d - Team: %d. Board access granted.\n", gamer->player, gamer->team_id);
     
     if ((total_players = get_total_players(gamer)) < 2)
     {
-        ft_printf("Waiting for an opponent. Only %d player on the board.\n", gamer->player);
+        ft_printf("⚠️ Waiting for an opponent. Only %d player on the board. ⚠️\n", gamer->player);
         usleep(500000);
         sops.sem_op = 1;
         semop(gamer->sem_id, &sops, 1);
@@ -70,7 +70,7 @@ void    play_turn(t_gamer *gamer)
     gamer->victory = check_for_victory(gamer);
     if (gamer->victory == true)
     {
-        ft_printf("Player: %d - Team: %d. YOU WIN!!!\n", gamer->player, gamer->team_id);
+        ft_printf("Player: %d - Team: %d. 🏆 YOU WIN!!! 🏆\n", gamer->player, gamer->team_id);
         gamer->alive = false;
         sops.sem_op = 1;
         semop(gamer->sem_id, &sops, 1);
@@ -94,10 +94,10 @@ void    play_turn(t_gamer *gamer)
     sops.sem_flg = 0;
     if (semop(gamer->sem_id, &sops, 1) == -1)
     {
-        ft_printf("Error: semop failed (unlock)\n");
+        ft_printf("❌ Error: semop failed (unlock) ❌\n");
         return;
     }
 
-    ft_printf("Player: %d - Team:%d. Board released\n", gamer->player, gamer->team_id);
+    ft_printf("✅ Player: %d - Team:%d. Board released\n", gamer->player, gamer->team_id);
     usleep(100000);
 }

@@ -32,9 +32,10 @@ void    to_moveplayer(t_gamer *gamer, int target_y, int target_x)
         gamer->y = new_y;
         gamer->x = new_x;
         gamer->board_ptr[gamer->y * gamer->board_dim + gamer->x] = gamer->team_id;
-        ft_printf("Player: %d - Team: %d moved to (%d, %d)\n", gamer->player, gamer->team_id, gamer->x, gamer->y);
+        ft_printf("🚀 Player: %d - Team: %d moved to (%d, %d) 🚀\n", gamer->player, gamer->team_id, gamer->x, gamer->y);
         return;
     }
 
-    ft_printf("Player: %d - Team: %d. ⛔ No available moves, waiting...\n", gamer->player, gamer->team_id);
+    ft_printf("⛔ Player: %d - Team: %d. No available moves, waiting... ⛔\n", gamer->player, gamer->team_id);
+    ft_printf("⛔ Another player is needed ⛔\n");
 }

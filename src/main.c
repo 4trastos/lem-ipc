@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     board = 0;
     if (argc < 3 || argc > 4 || (ft_gameratoi(argv[2]) != 42))
     {
-        ft_printf("Error: Use => ./lemipc <team> <ID proyect: 42> <Board (opcional)>\n");
+        ft_printf("❌ Error: Use => ./lemipc <team> <ID proyect: 42> <Board (opcional)> ❌\n");
         return (1);
     }
 
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     key = ftok(".", ft_gameratoi(argv[2]));
     if (key == -1)
     {
-        ft_printf("Error: ftok failed\n");
+        ft_printf("❌ Error: ftok failed ❌\n");
         return (1);
     }
     

@@ -20,7 +20,7 @@ int    player_one(t_gamer *gamer, key_t  key)
     gamer->board_ptr = shmat(gamer->shm_id, NULL, 0);                        // Adjuntar la memoria al proceso
     if (gamer->board_ptr == (void *)-1)
     {
-        ft_printf("Error: shmat failed\n");
+        ft_printf("❌ Error: shmat failed ❌\n");
         return (-1);
     }
 
@@ -30,21 +30,21 @@ int    player_one(t_gamer *gamer, key_t  key)
     gamer->sem_id = semget(key, 1, IPC_CREAT | 0666);
     if (gamer->sem_id == -1)
     {
-        ft_printf("Error: semget failed\n");
+        ft_printf("❌ Error: semget failed ❌\n");
         return (-1);
     }
     
     arg.val = 1;
     if (semctl(gamer->sem_id, 0, SETVAL, arg) == -1)
     {
-        ft_printf("Error: semctl failed\n");
+        ft_printf("❌ Error: semctl failed ❌\n");
         return (-1);
     }
     
     gamer->msg_id = msgget(key, IPC_CREAT | IPC_EXCL | 0666);
     if (gamer->msg_id == -1)
     {
-        ft_printf("Error: msgget failed\n");
+        ft_printf("❌ Error: msgget failed ❌\n");
         return (-1);
     }
     
@@ -74,7 +74,7 @@ int    other_player(t_gamer *gamer, key_t key)
     gamer->board_ptr = shmat(gamer->shm_id, NULL, 0);
     if (gamer->board_ptr == (void *)-1)
     {
-        ft_printf("Error: shmat failed\n");
+        ft_printf("❌ Error: shmat failed ❌\n");
         return (-1);
     }
 
@@ -84,7 +84,7 @@ int    other_player(t_gamer *gamer, key_t key)
     gamer->sem_id = semget(key, 0, 0);                                     // Unirse al semaforo existente
     if (gamer->sem_id == -1)
     {
-        ft_printf("Error: semget failed\n");
+        ft_printf("❌ Error: semget failed ❌\n");
         return (-1);
     }
 
@@ -101,10 +101,10 @@ int    other_player(t_gamer *gamer, key_t key)
     sops.sem_op = 1;
     semop(gamer->sem_id, &sops, 1);
 
-    gamer->msg_id = msgget(key, 0);                                        // Unirse a la cola de mensajes existente
+    gamer->msg_id = msgget(key, 0);
     if (gamer->msg_id == -1)
     {
-        ft_printf("Error: msgget failed\n");
+        ft_printf("❌ Error: msgget failed ❌\n");
         return (-1);
     }
 
