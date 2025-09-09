@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 
     ft_printf("PID: %d - Team: %d - Player: %d - Key: %d - Board: %d - RAM: %p\n", gamer->pid, gamer->team_id, gamer->player,key ,board, gamer->board_ptr);
     
-    while (gamer->alive == true || gamer->victory == false)
+    while (gamer->alive == true && gamer->victory == false)
         play_turn(gamer);
     
     clearmemsem(gamer);

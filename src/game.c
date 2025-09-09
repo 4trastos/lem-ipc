@@ -45,7 +45,6 @@ void    place_player_randomly(t_gamer *player)
 void    play_turn(t_gamer *gamer)
 {
     struct sembuf   sops;
-    int             total_players;
     
     ft_printf("Player: %d - Team: %d. Attempted to access the dashboard...\n", gamer->player, gamer->team_id);
     sops.sem_num = 0;
@@ -58,20 +57,28 @@ void    play_turn(t_gamer *gamer)
     }
     ft_printf("Player: %d - Team: %d. Board access granted.\n", gamer->player, gamer->team_id);
     
-    if ((total_players = get_total_players(gamer)) < 2)
+    if (is_surrounded(gamer))
     {
-        ft_printf("⚠️ Waiting for an opponent. Only %d player on the board. ⚠️\n", gamer->player);
-        usleep(500000);
+        *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
         sops.sem_op = 1;
         semop(gamer->sem_id, &sops, 1);
         return;
     }
 
-    gamer->victory = check_for_victory(gamer);
-    if (gamer->victory == true)
+    if (check_for_victory(gamer))
     {
         ft_printf("Player: %d - Team: %d. 🏆 YOU WIN!!! 🏆\n", gamer->player, gamer->team_id);
         gamer->alive = false;
+        gamer->victory = true;
+        sops.sem_op = 1;
+        semop(gamer->sem_id, &sops, 1);
+        return;
+    }
+
+    if (get_total_players(gamer) < 2)
+    {
+        ft_printf("⚠️ Waiting for another player. Only %d player on the board. ⚠️\n", gamer->player);
+        usleep(500000);
         sops.sem_op = 1;
         semop(gamer->sem_id, &sops, 1);
         return;
@@ -87,7 +94,7 @@ void    play_turn(t_gamer *gamer)
         return;
     }
 
-    ft_printf("Player: %d - Team: %d. Manipulating the board...\n", gamer->player, gamer->team_id);
+    ft_printf("✅ Player: %d - Team:%d. Board released\n", gamer->player, gamer->team_id);
 
     sops.sem_num = 0;
     sops.sem_op = 1;
@@ -98,6 +105,5 @@ void    play_turn(t_gamer *gamer)
         return;
     }
 
-    ft_printf("✅ Player: %d - Team:%d. Board released\n", gamer->player, gamer->team_id);
     usleep(100000);
 }

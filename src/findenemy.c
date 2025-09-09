@@ -41,8 +41,6 @@ void    ft_move(t_gamer *gamer)
     int target_y;
     int target_x;
 
-    if (is_surrounded(gamer))
-        return;
     if (find_enemy_target(gamer, &target_y, &target_x))
     {
         to_moveplayer(gamer, target_y, target_x);
