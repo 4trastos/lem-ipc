@@ -41,6 +41,9 @@ void    ft_move(t_gamer *gamer)
     int target_y;
     int target_x;
 
+    if (receive_message(gamer))
+        return;
+
     if (find_enemy_target(gamer, &target_y, &target_x))
     {
         to_moveplayer(gamer, target_y, target_x);
@@ -59,12 +62,13 @@ bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
 
     min_distance = INT_MAX;
     cell_value = 0;
+    found_target = false;
     for (int y = 0; y < gamer->board_dim; y++)
     {
         for (int x = 0; x < gamer->board_dim; x++)
         {
             cell_value = gamer->board_ptr[y * gamer->board_dim + x];
-            if (cell_value != gamer->team_id && cell_value != 0)
+            if (cell_value != 0 && cell_value != gamer->team_id)
             {
                 enemy_distance = abs(gamer->x - x) + abs(gamer->y - y);
                 if (enemy_distance < min_distance)
@@ -76,6 +80,11 @@ bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
                 }
             }
         }
+    }
+    if (found_target)
+    {
+        ft_printf("## OBJETIVO ENCONTRADO => Player: %d - Team: %d - Coordendas: (%d, %d)\n",
+            *(int *)(gamer->board_ptr + sizeof(int)), cell_value, *target_y, *target_x);
     }
     return (found_target);
 }

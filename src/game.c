@@ -9,39 +9,6 @@ int get_total_players(t_gamer *gamer)
     return (player_count);
 }
 
-void    place_player_randomly(t_gamer *player)
-{
-    struct sembuf   spos;
-    int             x;
-    int             y;
-    bool            found_spot;
-
-    found_spot = false;
-
-    spos.sem_num = 0;
-    spos.sem_op = -1;
-    spos.sem_flg = 0;
-    semop(player->sem_id, &spos, 1);
-
-    srand(time(NULL) + player->pid);
-    while (!found_spot)
-    {
-        x = rand() % player->board_dim;
-        y = rand() % player->board_dim;
-        if (player->board_ptr[y * player->board_dim + x] == 0)
-        {
-            player->x = x;
-            player->y = y;
-            player->board_ptr[y * player->board_dim + x] = player->team_id;
-            found_spot = true;
-        }
-    }
-    
-    ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", player->player, player->team_id, player->x, player->y);
-    spos.sem_op = 1;
-    semop(player->sem_id, &spos, 1);
-}
-
 void    play_turn(t_gamer *gamer)
 {
     struct sembuf   sops;
@@ -85,14 +52,6 @@ void    play_turn(t_gamer *gamer)
     }
 
     ft_move(gamer);
-    if (gamer->alive == false)
-    {
-        ft_printf("Player: %d - Team: %d.You're dead!!\n", gamer->player, gamer->team_id);
-        *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
-        sops.sem_op = 1;
-        semop(gamer->sem_id, &sops, 1);
-        return;
-    }
 
     ft_printf("✅ Player: %d - Team:%d. Board released\n", gamer->player, gamer->team_id);
 

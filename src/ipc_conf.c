@@ -11,6 +11,31 @@ int    ft_resconf(t_gamer *gamer, key_t  key, int board)
         return (1);
 }
 
+void    place_player_randomly(t_gamer *player)
+{
+    int             x;
+    int             y;
+    bool            found_spot;
+
+    found_spot = false;
+
+    srand(time(NULL) + player->pid);
+    while (!found_spot)
+    {
+        x = rand() % player->board_dim;
+        y = rand() % player->board_dim;
+        if (player->board_ptr[y * player->board_dim + x] == 0)
+        {
+            player->x = x;
+            player->y = y;
+            player->board_ptr[y * player->board_dim + x] = player->team_id;
+            found_spot = true;
+        }
+    }
+    
+    ft_printf("Player: %d - Team: %d - placed at (%d, %d)\n", player->player, player->team_id, player->x, player->y);
+}
+
 int    player_one(t_gamer *gamer, key_t  key)
 {
     int                 player_count;
@@ -57,11 +82,11 @@ int    player_one(t_gamer *gamer, key_t  key)
     player_count = player_count + 1;
     gamer->player = player_count;
     *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
+    place_player_randomly(gamer);
     
     sops.sem_op = 1;
     semop(gamer->sem_id, &sops, 1);
 
-    place_player_randomly(gamer);
     return (0);
 }
 
@@ -97,10 +122,6 @@ int    other_player(t_gamer *gamer, key_t key)
     player_count = player_count + 1;
     gamer->player = player_count;
     *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
-
-    sops.sem_op = 1;
-    semop(gamer->sem_id, &sops, 1);
-
     gamer->msg_id = msgget(key, 0);
     if (gamer->msg_id == -1)
     {
@@ -109,5 +130,9 @@ int    other_player(t_gamer *gamer, key_t key)
     }
 
     place_player_randomly(gamer);
+
+    sops.sem_op = 1;
+    semop(gamer->sem_id, &sops, 1);
+
     return (0);
 }
