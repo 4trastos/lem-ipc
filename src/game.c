@@ -3,7 +3,7 @@
 
 int get_total_teams(t_gamer *gamer)
 {
-    int     team_count;
+    int     team_count = 0;
     int     cell_value;
     int     max_teams = 100;
     bool    team_present[max_teams + 1];
@@ -46,6 +46,7 @@ void    play_turn(t_gamer *gamer)
 {
     struct sembuf   sops;
     int game_status;
+    int *game_board;
     
     ft_printf("Player: %d - Team: %d. Attempted to access the dashboard...\n", gamer->player, gamer->team_id);
     
@@ -59,7 +60,7 @@ void    play_turn(t_gamer *gamer)
     }
     
     ft_printf("Player: %d - Team: %d. Board access granted.\n", gamer->player, gamer->team_id);
-    
+    game_board = (int *)(gamer->board_ptr + 2 * sizeof(int));
     game_status = check_game_status(gamer);
 
     if (game_status == GAME_OVER)
@@ -86,7 +87,7 @@ void    play_turn(t_gamer *gamer)
         {
             ft_printf("Player: %d - Team: %d. ☠️ You are surrounded and eliminated. ☠️\n", gamer->player, gamer->team_id);
             *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
-            gamer->board_ptr[gamer->y * gamer->board_size + gamer->x] = 0;
+            game_board[gamer->y * gamer->board_size + gamer->x] = 0;
             gamer->alive = false;
         }
         else
