@@ -28,6 +28,7 @@ int main(int argc, char **argv)
     }
     
     gamer = malloc(sizeof(t_gamer));
+    ft_memset(gamer, 0, sizeof(t_gamer));
     pid = getpid();
     gamer->pid = pid;
     gamer->team_id = ft_gameratoi(argv[1]);

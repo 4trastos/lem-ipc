@@ -17,6 +17,19 @@
 # include <time.h>
 # include <math.h>
 
+# define    ON_GOING    0
+# define    VICTORY     1
+# define    GAME_OVER   2
+
+/* Estructura de memoria corregida:
+
+0x0000: [int] board_dim (4 bytes)
+0x0004: [int] player_count (4 bytes)  
+0x0008: [int] celda (0,0) (4 bytes)
+0x000C: [int] celda (0,1) (4 bytes)
+...
+0x...: [int] celda (99,99) (4 bytes) */
+
 union semaphunion
 {
     int                 val;
@@ -60,14 +73,13 @@ bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x);
 void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
 bool    check_for_victory(t_gamer *gamer);
 void    send_message(t_gamer *gamer, int target_x, int target_y);
-
-//*** explicit functions ***
 int     ft_resconf(t_gamer *gamer, key_t key, int board);
 int     player_one(t_gamer *gamer, key_t  key);
 int     other_player(t_gamer *gamer, key_t key);
 void    clearmemsem(t_gamer *gamer);
-int     get_total_players(t_gamer *gamer);
+int     check_game_status(t_gamer *gamer);
 int     receive_message(t_gamer *gamer);
+int     get_total_teams(t_gamer *gamer);
 
 //*** auxiliary functions ***
 int     ft_gameratoi(char *str);

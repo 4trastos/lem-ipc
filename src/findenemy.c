@@ -5,6 +5,9 @@ bool    is_surrounded(t_gamer *gamer)
 {
     int cell_value;
     int oponents_team[100];
+    int *game_board = (int *)(gamer->board_ptr + 2 * sizeof(int));
+
+    ft_printf("[DEBUG - 02]. ENTRO A MIRARA SI ESTOY RODEADO. Player: %d\n", gamer->player);
 
     ft_memset(oponents_team, 0, sizeof(oponents_team));
 
@@ -15,7 +18,7 @@ bool    is_surrounded(t_gamer *gamer)
              if (y >= 0 && y < gamer->board_dim && x >= 0 && x < gamer->board_dim
                 && (y != gamer->y || x != gamer->x))
             {
-                cell_value = gamer->board_ptr[y * gamer->board_dim + x];
+                cell_value = game_board[y * gamer->board_dim + x];
                 if (cell_value != 0 && cell_value != gamer->team_id)
                     oponents_team[cell_value]++;
             }
@@ -25,21 +28,15 @@ bool    is_surrounded(t_gamer *gamer)
     for (size_t i = 0; i < 100; i++)
     {
         if (oponents_team[i] >= 2)
-        {
-            gamer->alive = false;
-            gamer->board_ptr[gamer->y * gamer->board_dim + gamer->x] = 0;
-            ft_printf("Player: %d - Team: %d is surrounded and eliminated.\n", gamer->player, gamer->team_id);
             return (true);
-        }
     }
-
     return (false);
 }
 
 void    ft_move(t_gamer *gamer)
 {
-    int target_y;
-    int target_x;
+    int target_y = 0;
+    int target_x = 0;
 
     if (receive_message(gamer))
         return;
@@ -55,19 +52,24 @@ void    ft_move(t_gamer *gamer)
 
 bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
 {
+    int     *game_board = (int *)(gamer->board_ptr + 2 * sizeof(int));
     int     cell_value;
     int     enemy_distance;
     int     min_distance;
+    int     target_team;
     bool    found_target;    
 
     min_distance = INT_MAX;
-    cell_value = 0;
+    target_team = 0;
     found_target = false;
+
+    ft_printf("[DEBUG - 04] ENTRO A BUSCAR UN ONJETIVO- Player: %d\n", gamer->player);
+
     for (int y = 0; y < gamer->board_dim; y++)
     {
         for (int x = 0; x < gamer->board_dim; x++)
         {
-            cell_value = gamer->board_ptr[y * gamer->board_dim + x];
+            cell_value = game_board[y * gamer->board_dim + x];
             if (cell_value != 0 && cell_value != gamer->team_id)
             {
                 enemy_distance = abs(gamer->x - x) + abs(gamer->y - y);
@@ -76,15 +78,14 @@ bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
                     min_distance = enemy_distance;
                     *target_y = y;
                     *target_x = x;
+                    target_team = cell_value; 
                     found_target = true;
                 }
             }
         }
     }
     if (found_target)
-    {
-        ft_printf("## OBJETIVO ENCONTRADO => Player: %d - Team: %d - Coordendas: (%d, %d)\n",
-            *(int *)(gamer->board_ptr + sizeof(int)), cell_value, *target_y, *target_x);
-    }
+        ft_printf("## OBJETIVO ENCONTRADO => Team: %d - Coordendas: (%d, %d)\n", target_team, *target_y, *target_x);
+    
     return (found_target);
 }

@@ -13,10 +13,6 @@ void    send_message(t_gamer *gamer, int target_x, int target_y)
 
     if (msgsnd(gamer->msg_id, &message, sizeof(t_messenger), IPC_NOWAIT) == -1)
         ft_printf("❌ Error sending message to queue. The queue may be full. ❌\n");
-
-    // ft_printf("\nMessage sent\n");
-    // ft_printf("I pursue this enemy (Team): %d - At these coordinates: (%d, %d)\n", message.target, target_x, target_y);
-    // ft_printf("I am player: %d - Team:  %d and these are my coordinates: (%d, %d)\n", gamer->player, gamer->team_id, gamer->x, gamer->y);
 }
 
 int receive_message(t_gamer *gamer)

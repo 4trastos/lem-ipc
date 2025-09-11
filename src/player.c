@@ -8,6 +8,8 @@ void    to_moveplayer(t_gamer *gamer, int target_y, int target_x)
     int new_x;
     int new_y;
 
+    ft_printf("[DEBUG: 05] ENTRO A VER SI PUEDO MOVER. Player: %d\n", gamer->player);
+
     if (abs(gamer->x - target_x) >= abs(gamer->y - target_y))
     {
         if (target_x > gamer->x)

@@ -4,7 +4,10 @@
 // Verificación si los recursos IPC ya existen
 int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 {
-    gamer->shm_id = shmget(key, board, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
+    size_t  total_size;
+
+    total_size = 2 * sizeof(int) + (board * sizeof(int));
+    gamer->shm_id = shmget(key, total_size, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
     if (gamer->shm_id == -1)
         return (2);
     else
@@ -15,7 +18,8 @@ void    place_player_randomly(t_gamer *player)
 {
     int             x;
     int             y;
-    bool            found_spot;
+    int             *game_board = (int *)(player->board_ptr + 2 * sizeof(int));
+    bool            found_spot;  
 
     found_spot = false;
 
@@ -24,11 +28,11 @@ void    place_player_randomly(t_gamer *player)
     {
         x = rand() % player->board_dim;
         y = rand() % player->board_dim;
-        if (player->board_ptr[y * player->board_dim + x] == 0)
+        if (game_board[y * player->board_dim + x] == 0)
         {
             player->x = x;
             player->y = y;
-            player->board_ptr[y * player->board_dim + x] = player->team_id;
+            game_board[y * player->board_dim + x] = player->team_id;
             found_spot = true;
         }
     }
@@ -38,7 +42,8 @@ void    place_player_randomly(t_gamer *player)
 
 int    player_one(t_gamer *gamer, key_t  key)
 {
-    int                 player_count;
+    int                 *player_count;
+    size_t              total_size;
     union semaphunion   arg;
     struct sembuf       sops;
 
@@ -49,8 +54,13 @@ int    player_one(t_gamer *gamer, key_t  key)
         return (-1);
     }
 
-    ft_memset(gamer->board_ptr, 0, gamer->board_size);
-    ft_memcpy(gamer->board_ptr, &gamer->board_dim, sizeof(int));
+    player_count = (int *)(gamer->board_ptr + sizeof(int));
+    total_size = 2 * sizeof(int) + (gamer->board_size * sizeof(int));
+
+    ft_memset(gamer->board_ptr, 0, total_size);
+    *(int *)gamer->board_ptr = gamer->board_dim;
+    *player_count = 1;
+    *(int *)(gamer->board_ptr + sizeof(int)) = 1;
     
     gamer->sem_id = semget(key, 1, IPC_CREAT | 0666);
     if (gamer->sem_id == -1)
@@ -78,10 +88,7 @@ int    player_one(t_gamer *gamer, key_t  key)
     sops.sem_flg = 0;
     semop(gamer->sem_id, &sops, 1);
 
-    player_count = *(int *)(gamer->board_ptr + sizeof(int));
-    player_count = player_count + 1;
-    gamer->player = player_count;
-    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
+    gamer->player = *player_count;
     place_player_randomly(gamer);
     
     sops.sem_op = 1;
@@ -92,7 +99,7 @@ int    player_one(t_gamer *gamer, key_t  key)
 
 int    other_player(t_gamer *gamer, key_t key)
 {
-    int             player_count;
+    int             *player_count;
     struct sembuf   sops;
 
     gamer->shm_id = shmget(key, 0, 0);                                     // Unirse a la memoria compartida existente
@@ -103,7 +110,8 @@ int    other_player(t_gamer *gamer, key_t key)
         return (-1);
     }
 
-    ft_memcpy(&gamer->board_dim, gamer->board_ptr, sizeof(int));
+    player_count = (int *)(gamer->board_ptr + sizeof(int));
+    gamer->board_dim = *(int *)gamer->board_ptr;
     gamer->board_size = gamer->board_dim * gamer->board_dim;
 
     gamer->sem_id = semget(key, 0, 0);                                     // Unirse al semaforo existente
@@ -118,10 +126,8 @@ int    other_player(t_gamer *gamer, key_t key)
     sops.sem_flg = 0;
     semop(gamer->sem_id, &sops, 1);
 
-    player_count = *(int *)(gamer->board_ptr + sizeof(int));
-    player_count = player_count + 1;
-    gamer->player = player_count;
-    *(int *)(gamer->board_ptr + sizeof(int)) = player_count;
+    *player_count += 1;
+    gamer->player = *player_count;
     gamer->msg_id = msgget(key, 0);
     if (gamer->msg_id == -1)
     {

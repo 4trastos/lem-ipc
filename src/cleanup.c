@@ -4,12 +4,18 @@
 void    clearmemsem(t_gamer *gamer)
 {
     int total_player;
+    int *player_count_ptr;
 
-    total_player = *(int *)(gamer->board_ptr + sizeof(int));
+    ft_printf("DEBUG: Cleaning up resources...\n");
+
+    player_count_ptr = (int *)(gamer->board_ptr + sizeof(int));
+    total_player = *player_count_ptr;
+
+    ft_printf("DEBUG: Total players = %d\n", total_player);
 
     if (shmdt(gamer->board_ptr) == -1)
         ft_printf("❌ Error: Failed to detach shared memory ❌\n");
-    if (total_player == 0)
+    if (total_player <= 1)
     {
         ft_printf("Last player has left. Cleaning up IPC resources...\n");
 
@@ -21,31 +27,3 @@ void    clearmemsem(t_gamer *gamer)
             ft_printf("Error: Failde to remove message queue\n");
     }
 }
-
-// Fase 3: Limpieza de Recursos de IPC
-
-/* Esta es la fase final y es tan importante como la inicial para evitar la "contaminación" del sistema.
-
-Paso 3.1: Detección del Último Jugador
-
-    Al salir de la partida (ya sea por muerte o victoria), un jugador debe verificar si es el último en el tablero.
-    Esto se puede hacer contando el número de procesos en el tablero de memoria compartida. 
-    Si la cuenta llega a cero, el jugador es el último.
-
-Paso 3.2: Eliminación de los Recursos
-
-    Solo el último jugador debe destruir los recursos IPC.
-    Utiliza shmctl con IPC_RMID para eliminar la memoria compartida.
-    Utiliza semctl con IPC_RMID para eliminar el semáforo.
-    Utiliza msgctl con IPC_RMID para eliminar la cola de mensajes.
-    ¡No olvides desvincular la memoria compartida con shmdt!
-
-Consideraciones Adicionales
-
-    - MakeFile: Necesitas un Makefile que compile tu proyecto.
-    - Gestión de Errores: Todos los IPC pueden fallar. 
-    Asegúrate de manejar los errores adecuadamente y salir del programa de forma segura (exit(1)).
-    - Variables Globales: Utiliza variables globales para los identificadores de los recursos IPC 
-    (shm_id, sem_id, msg_id) y las direcciones de la memoria compartida.
-    Modo de Visualización: Implementa la visualización del tablero en modo texto. 
-    Puedes imprimir el tablero con los números de los equipos. */
