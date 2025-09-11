@@ -6,7 +6,8 @@ int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 {
     size_t  total_size;
 
-    total_size = 3 * sizeof(int) + (board * sizeof(int));                       // Espacio adicional (total equipos, jugadores y el dorsal de cada jugador)
+    // Espacio adicional para el contador de equipos, total jugadores y el tablero
+    total_size = 3 * sizeof(int) + (board * sizeof(int));
     gamer->shm_id = shmget(key, total_size, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
     if (gamer->shm_id == -1)
         return (2);
@@ -133,7 +134,7 @@ int    other_player(t_gamer *gamer, key_t key)
     semop(gamer->sem_id, &sops, 1);
 
     team_present = false;
-    for (int i = 0; i < gamer->board_dim; i++)
+    for (int i = 0; i < gamer->board_size; i++)
     {
         if (game_board[i] == gamer->team_id)
         {

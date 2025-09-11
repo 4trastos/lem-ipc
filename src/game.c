@@ -89,7 +89,7 @@ void    play_turn(t_gamer *gamer)
         {
             ft_printf("Player: %d - Team: %d. ☠️ You are surrounded and eliminated. ☠️\n", gamer->player, gamer->team_id);
             *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
-            game_board[gamer->y * gamer->board_size + gamer->x] = 0;
+            game_board[gamer->y * gamer->board_dim + gamer->x] = 0;
             gamer->alive = false;
         }
         else
