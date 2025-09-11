@@ -5,7 +5,7 @@ bool    is_surrounded(t_gamer *gamer)
 {
     int cell_value;
     int oponents_team[100];
-    int *game_board = (int *)(gamer->board_ptr + 2 * sizeof(int));
+    int *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
 
     ft_printf("[DEBUG - 02]. ENTRO A MIRARA SI ESTOY RODEADO. Player: %d\n", gamer->player);
 
@@ -52,7 +52,7 @@ void    ft_move(t_gamer *gamer)
 
 bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
 {
-    int     *game_board = (int *)(gamer->board_ptr + 2 * sizeof(int));
+    int     *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
     int     cell_value;
     int     enemy_distance;
     int     min_distance;

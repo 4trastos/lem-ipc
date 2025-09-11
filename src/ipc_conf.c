@@ -6,7 +6,7 @@ int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 {
     size_t  total_size;
 
-    total_size = 2 * sizeof(int) + (board * sizeof(int));
+    total_size = 3 * sizeof(int) + (board * sizeof(int));                       // Espacio adicional (total equipos, jugadores y el dorsal de cada jugador)
     gamer->shm_id = shmget(key, total_size, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
     if (gamer->shm_id == -1)
         return (2);
@@ -18,7 +18,7 @@ void    place_player_randomly(t_gamer *player)
 {
     int             x;
     int             y;
-    int             *game_board = (int *)(player->board_ptr + 2 * sizeof(int));
+    int             *game_board = (int *)(player->board_ptr + 3 * sizeof(int));
     bool            found_spot;  
 
     found_spot = false;
@@ -55,12 +55,13 @@ int    player_one(t_gamer *gamer, key_t  key)
     }
 
     player_count = (int *)(gamer->board_ptr + sizeof(int));
-    total_size = 2 * sizeof(int) + (gamer->board_size * sizeof(int));
+    total_size = 3 * sizeof(int) + (gamer->board_size * sizeof(int));
 
     ft_memset(gamer->board_ptr, 0, total_size);
     *(int *)gamer->board_ptr = gamer->board_dim;
     *player_count = 1;
     *(int *)(gamer->board_ptr + sizeof(int)) = 1;
+    *(int *)(gamer->board_ptr + 2 * sizeof(int)) = 1;
     
     gamer->sem_id = semget(key, 1, IPC_CREAT | 0666);
     if (gamer->sem_id == -1)
@@ -99,8 +100,11 @@ int    player_one(t_gamer *gamer, key_t  key)
 
 int    other_player(t_gamer *gamer, key_t key)
 {
-    int             *player_count;
     struct sembuf   sops;
+    int             *player_count;
+    int             *total_teams;
+    int             team_present;
+    int             *game_board;
 
     gamer->shm_id = shmget(key, 0, 0);                                     // Unirse a la memoria compartida existente
     gamer->board_ptr = shmat(gamer->shm_id, NULL, 0);
@@ -113,6 +117,8 @@ int    other_player(t_gamer *gamer, key_t key)
     player_count = (int *)(gamer->board_ptr + sizeof(int));
     gamer->board_dim = *(int *)gamer->board_ptr;
     gamer->board_size = gamer->board_dim * gamer->board_dim;
+    total_teams = (int *)(gamer->board_ptr + 2 * sizeof(int));
+    game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
 
     gamer->sem_id = semget(key, 0, 0);                                     // Unirse al semaforo existente
     if (gamer->sem_id == -1)
@@ -125,6 +131,22 @@ int    other_player(t_gamer *gamer, key_t key)
     sops.sem_op = -1;
     sops.sem_flg = 0;
     semop(gamer->sem_id, &sops, 1);
+
+    team_present = false;
+    for (int i = 0; i < gamer->board_dim; i++)
+    {
+        if (game_board[i] == gamer->team_id)
+        {
+            team_present = true;
+            break;
+        }
+    }
+    
+    if (!team_present)
+    {
+        *total_teams += 1;
+        ft_printf("New team detected! Total teams: %d\n", *total_teams);
+    }
 
     *player_count += 1;
     gamer->player = *player_count;

@@ -7,7 +7,7 @@ int get_total_teams(t_gamer *gamer)
     int     cell_value;
     int     max_teams = 100;
     bool    team_present[max_teams + 1];
-    int     *game_board = (int *)(gamer->board_ptr + 2 * sizeof(int));
+    int     *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
 
     for (int i = 0; i <= max_teams; i++)
         team_present[i] = false;
@@ -31,13 +31,15 @@ int check_game_status(t_gamer *gamer)
 {
     int teams;
     int players;
+    int initial_teams;
 
+    initial_teams = *(int*)(gamer->board_ptr + 2 * sizeof(int));
     teams = get_total_teams(gamer);
     players = *(int*)(gamer->board_ptr + sizeof(int));
 
     if (players == 0)
         return(GAME_OVER);
-    if (teams == 1)
+    if (initial_teams > 1 && teams == 1)
         return(VICTORY);
     return(ON_GOING);
 }
@@ -45,8 +47,8 @@ int check_game_status(t_gamer *gamer)
 void    play_turn(t_gamer *gamer)
 {
     struct sembuf   sops;
-    int game_status;
-    int *game_board;
+    int             game_status;
+    int             *game_board;
     
     ft_printf("Player: %d - Team: %d. Attempted to access the dashboard...\n", gamer->player, gamer->team_id);
     
@@ -60,7 +62,7 @@ void    play_turn(t_gamer *gamer)
     }
     
     ft_printf("Player: %d - Team: %d. Board access granted.\n", gamer->player, gamer->team_id);
-    game_board = (int *)(gamer->board_ptr + 2 * sizeof(int));
+    game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
     game_status = check_game_status(gamer);
 
     if (game_status == GAME_OVER)
