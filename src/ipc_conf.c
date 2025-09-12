@@ -6,7 +6,7 @@ int    ft_resconf(t_gamer *gamer, key_t  key, int board)
 {
     size_t  total_size;
 
-    // Espacio adicional para el contador de equipos, total jugadores y el tablero
+    // Espacio adicional: Tamaño tablero, Total equipos y jugadores.
     total_size = 3 * sizeof(int) + (board * sizeof(int));
     gamer->shm_id = shmget(key, total_size, IPC_CREAT | IPC_EXCL | 0666);       // La Solicitud del Recurso
     if (gamer->shm_id == -1)
@@ -44,6 +44,8 @@ void    place_player_randomly(t_gamer *player)
 int    player_one(t_gamer *gamer, key_t  key)
 {
     int                 *player_count;
+    int                 *total_teams;
+    int                 *board_dim;
     size_t              total_size;
     union semaphunion   arg;
     struct sembuf       sops;
@@ -55,14 +57,15 @@ int    player_one(t_gamer *gamer, key_t  key)
         return (-1);
     }
 
+    board_dim = (int *)gamer->board_ptr;
     player_count = (int *)(gamer->board_ptr + sizeof(int));
+    total_teams = (int *)(gamer->board_ptr + 2 * sizeof(int));
     total_size = 3 * sizeof(int) + (gamer->board_size * sizeof(int));
-
     ft_memset(gamer->board_ptr, 0, total_size);
-    *(int *)gamer->board_ptr = gamer->board_dim;
+
+    *board_dim = gamer->board_dim;
     *player_count = 1;
-    *(int *)(gamer->board_ptr + sizeof(int)) = 1;
-    *(int *)(gamer->board_ptr + 2 * sizeof(int)) = 1;
+    *total_teams = 1;
     
     gamer->sem_id = semget(key, 1, IPC_CREAT | 0666);
     if (gamer->sem_id == -1)
@@ -107,7 +110,13 @@ int    other_player(t_gamer *gamer, key_t key)
     int             team_present;
     int             *game_board;
 
-    gamer->shm_id = shmget(key, 0, 0);                                     // Unirse a la memoria compartida existente
+    gamer->shm_id = shmget(key, 0, 0);
+    if (gamer->shm_id == -1)
+    {
+        ft_printf("❌ Error: shmget failed - no existe memoria compartida ❌\n");
+        return (-1);
+    }
+
     gamer->board_ptr = shmat(gamer->shm_id, NULL, 0);
     if (gamer->board_ptr == (void *)-1)
     {

@@ -9,6 +9,7 @@ int get_total_teams(t_gamer *gamer)
     bool    team_present[max_teams + 1];
     int     *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
 
+    ft_printf("[DEBUG - 07] GET TOTAL TEAMS\n");
     for (int i = 0; i <= max_teams; i++)
         team_present[i] = false;
     
@@ -17,10 +18,19 @@ int get_total_teams(t_gamer *gamer)
         for (int x = 0; x < gamer->board_dim; x++)
         {
             cell_value = game_board[y * gamer->board_dim + x];
-            if (cell_value != 0 && !team_present[cell_value])
+            //ft_printf("[DEBUG - 06] VALOR DE LA CELDA DE RAM CONTANDO EQIUPOS: %d\n", cell_value);
+            if (cell_value != 0)
             {
-                team_present[cell_value] = true;
-                team_count++;
+                if (cell_value > max_teams || cell_value < 0)
+                {
+                    ft_printf("❌ Error: Invalid team ID (%d) found on the board. The maximum team ID supported is %d.\n", cell_value, max_teams);
+                    return (-1);
+                }
+                if (!team_present[cell_value])
+                {
+                    team_present[cell_value] = true;
+                    team_count++;
+                }
             }
         }
     }
@@ -33,10 +43,15 @@ int check_game_status(t_gamer *gamer)
     int players;
     int initial_teams;
 
+    ft_printf("[DEBUG - 06] CHECK GAME ESTATUS\n");
     initial_teams = *(int*)(gamer->board_ptr + 2 * sizeof(int));
     teams = get_total_teams(gamer);
     players = *(int*)(gamer->board_ptr + sizeof(int));
+    ft_printf("[DEBUG - 08] EQUIPOS DE INICIO: ( %d )\n", initial_teams);
+    ft_printf("[DEBUG - 09] EQUIPOS EN EL TABLERO: ( %d ) - JUGADORES EN EL TABLERO: ( %d )\n", teams, players);
 
+    if (teams == -1)
+        return (-1);
     if (players == 0)
         return(GAME_OVER);
     if (initial_teams > 1 && teams == 1)
@@ -64,6 +79,13 @@ void    play_turn(t_gamer *gamer)
     ft_printf("Player: %d - Team: %d. Board access granted.\n", gamer->player, gamer->team_id);
     game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
     game_status = check_game_status(gamer);
+
+    if (game_status == -1)
+    {
+        sops.sem_op = 1;
+        semop(gamer->sem_id, &sops, 1);
+        return;
+    }
 
     if (game_status == GAME_OVER)
     {
@@ -96,7 +118,7 @@ void    play_turn(t_gamer *gamer)
             ft_move(gamer);
     }
 
-    ft_printf("✅ Player: %d - Team:%d. Board released\n", gamer->player, gamer->team_id);
+    ft_printf("✅ Player: %d - Team: %d. Board released\n", gamer->player, gamer->team_id);
 
     sops.sem_num = 0;
     sops.sem_op = 1;
