@@ -1,6 +1,8 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 #include "../incl/visualizer.h"
+#include <signal.h>
+#include <unistd.h>
 
 const char *team_colors[] = {
     BACKGROUND_BLACK TEXT_WHITE,
@@ -18,6 +20,13 @@ const char *team_symbols[] = {
     "☀", "☁", "★", "☆", "☂", "☃",
     "♠", "♥", "♦", "♣", "☺", "☻"
 };
+
+static void handle_sigint(int sig)
+{
+    (void)sig;
+    ft_printf("%s\n👋 Visualizer terminated by user\n%s", RESET_COLOR, RESET_COLOR);
+    exit(0);
+}
 
 const char *get_team_color(int team_id)
 {
@@ -55,7 +64,7 @@ void    draw_board(int *game_board, int board_dim, int players, int teams)
     }
     ft_printf("\n-------------------------------------\n\n");
 
-    // Dibujar borde superior - ajustado para símbolos
+    // Borde superior
     ft_printf("   ");
     for (int x = 0; x < board_dim; x++) {
         ft_printf("---");
@@ -73,14 +82,14 @@ void    draw_board(int *game_board, int board_dim, int players, int teams)
             else
             {
                 ft_printf("%s", get_team_color(team_id));
-                ft_printf(" %s ", get_team_symbol(team_id)); // Espacio alrededor del símbolo
+                ft_printf(" %s ", get_team_symbol(team_id));
                 ft_printf("%s", RESET_COLOR);
             }
         }
         ft_printf("|\n");
     }
 
-    // Dibujar borde inferior
+    // Borde inferior
     ft_printf("   ");
     for (int x = 0; x < board_dim; x++) {
         ft_printf("---");
@@ -98,13 +107,16 @@ int main(int argc, char **argv)
     int     board_dim;
     int     players;
     int     teams;
+    int     starting_teams;
     int     board_size;
     int     *game_board;
     void    *shm_prt;
 
+    signal(SIGINT, handle_sigint);
+
     if (argc != 2 || ft_gameratoi(argv[1]) != 42)
     {
-        ft_printf("❌ Error: Use => ./visualizer <ID proyect: 42> ❌\n");
+        ft_printf("❌ Error: Use => ./visualizer <ID project: 42> ❌\n");
         return (1);
     }
 
@@ -133,28 +145,31 @@ int main(int argc, char **argv)
     board_dim = (int)sqrt(board_size);
     players = *(int *)(shm_prt + sizeof(int));
     teams = *(int *)(shm_prt + 2 * sizeof(int));
-    game_board = (int *)(shm_prt + 3 *sizeof(int));
+    starting_teams = teams;
+    game_board = (int *)(shm_prt + 3 * sizeof(int));
 
     while (teams > 1)
     {   
         players = *(int *)(shm_prt + sizeof(int));
         teams = *(int *)(shm_prt + 2 * sizeof(int));
         draw_board(game_board, board_dim, players, teams);
-        usleep(500000); // Medio segundo entre actualizaciones
+        usleep(500000);
     }
     
     draw_board(game_board, board_dim, players, teams);
-    if (teams == 1)
+    int winning_team = 0;
+    for (int i = 0; i < board_size; i++)
     {
-        int winning_team = 0;
-        for (int i = 0; i < board_size; i++) {
-            if (game_board[i] != 0) {
-                winning_team = game_board[i];
-                break;
-            }
+        if (game_board[i] != 0) {
+            winning_team = game_board[i];
+            break;
         }
-        ft_printf("\n🎉 ¡JUEGO TERMINADO! EL EQUIPO %d ES EL GANADOR. 🎉\n", winning_team);
     }
+
+    if (winning_team > 0)
+        ft_printf("\n🎉 ¡JUEGO TERMINADO! EL EQUIPO %d ES EL GANADOR. 🎉\n", winning_team);
+    else if (starting_teams == 0)
+        ft_printf("\n💀 JUEGO INICIADO SIN JUGADORES. 💀\n");
     else
         ft_printf("\n💀 JUEGO TERMINADO. NO HAY GANADOR. 💀\n");
 

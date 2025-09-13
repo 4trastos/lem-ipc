@@ -32,6 +32,14 @@
 ...
 0x...: [int] celda (99,99) (4 bytes) */
 
+typedef struct s_node
+{
+    int                 x;
+    int                 y;
+    int                 px;
+    int                 py;
+} t_node;
+
 union semaphunion
 {
     int                 val;
@@ -85,6 +93,7 @@ int     argument_parsing(char **argv, int *board);
 void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
 void    place_player_randomly(t_gamer *gamer);
 void    ft_move(t_gamer *player);
+void    maybe_decrement_team(t_gamer *gamer, int team_id);
 
 //*** comunications */
 int     receive_message(t_gamer *gamer);

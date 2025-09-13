@@ -5,7 +5,7 @@ CFLAGS = -Wall -Werror -Wextra -g
 RM = rm -f
 LIB = -lftprintf
 
-SRC = src/main.c src/game.c src/player.c src/ipc_conf.c src/parse.c src/cleanup.c \
+SRC = src/main.c src/game.c src/move.c src/ipc_conf.c src/parse.c src/cleanup.c \
         src/findenemy.c src/auxiliar.c src/message_queue.c
 BONUS_SRC = src/visualizer.c src/auxiliar.c
 OBJS = $(SRC:.c=.o)

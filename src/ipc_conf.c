@@ -107,8 +107,8 @@ int    other_player(t_gamer *gamer, key_t key)
     struct sembuf   sops;
     int             *player_count;
     int             *total_teams;
-    int             team_present;
     int             *game_board;
+    bool            is_new_team;
 
     gamer->shm_id = shmget(key, 0, 0);
     if (gamer->shm_id == -1)
@@ -142,17 +142,17 @@ int    other_player(t_gamer *gamer, key_t key)
     sops.sem_flg = 0;
     semop(gamer->sem_id, &sops, 1);
 
-    team_present = false;
+    is_new_team = true;
     for (int i = 0; i < gamer->board_size; i++)
     {
         if (game_board[i] == gamer->team_id)
         {
-            team_present = true;
+            is_new_team = false;
             break;
         }
     }
     
-    if (!team_present)
+    if (is_new_team)
     {
         *total_teams += 1;
         ft_printf("New team detected! Total teams: %d\n", *total_teams);

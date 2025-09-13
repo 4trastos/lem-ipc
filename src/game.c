@@ -10,6 +10,7 @@ int get_total_teams(t_gamer *gamer)
     int     *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
 
     ft_printf("[DEBUG - 07] GET TOTAL TEAMS\n");
+
     for (int i = 0; i <= max_teams; i++)
         team_present[i] = false;
     
@@ -38,22 +39,22 @@ int get_total_teams(t_gamer *gamer)
 
 int check_game_status(t_gamer *gamer)
 {
-    int teams;
+    int total_teams;
     int players;
     int initial_teams;
 
     ft_printf("[DEBUG - 06] CHECK GAME ESTATUS\n");
     initial_teams = *(int*)(gamer->board_ptr + 2 * sizeof(int));
-    teams = get_total_teams(gamer);
+    total_teams = get_total_teams(gamer);
     players = *(int*)(gamer->board_ptr + sizeof(int));
     ft_printf("[DEBUG - 08] EQUIPOS DE INICIO: ( %d )\n", initial_teams);
-    ft_printf("[DEBUG - 09] EQUIPOS EN EL TABLERO: ( %d ) - JUGADORES EN EL TABLERO: ( %d )\n", teams, players);
+    ft_printf("[DEBUG - 09] EQUIPOS EN EL TABLERO: ( %d ) - JUGADORES EN EL TABLERO: ( %d )\n", total_teams, players);
 
-    if (teams == -1)
+    if (total_teams == -1)
         return (-1);
     if (players == 0)
         return(GAME_OVER);
-    if (initial_teams > 1 && teams == 1)
+    if (initial_teams > 1 && total_teams == 1)
         return(VICTORY);
     return(ON_GOING);
 }
@@ -113,6 +114,7 @@ void    play_turn(t_gamer *gamer)
             gamer->alive = false;
             game_board[gamer->y * gamer->board_dim + gamer->x] = 0;
             *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
+            maybe_decrement_team(gamer, gamer->team_id);
         }
         else
             ft_move(gamer);
