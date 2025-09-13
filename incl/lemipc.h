@@ -17,6 +17,7 @@
 # include <time.h>
 # include <math.h>
 # include <errno.h>
+# include <signal.h>
 
 # define    ON_GOING    0
 # define    VICTORY     1
@@ -64,6 +65,8 @@ typedef struct s_messenger
     int             target_x;
     int             target_y;
 }   t_messenger;
+
+extern t_gamer *global_gamer;
 
 //*** main functions ***/
 void    play_turn(t_gamer *gamer);

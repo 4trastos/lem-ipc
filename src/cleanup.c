@@ -3,14 +3,27 @@
 
 void    clearmemsem(t_gamer *gamer)
 {
-    ft_printf("DEBUG: Detaching shared memory...\n");
-    if (shmdt(gamer->board_ptr) == -1)
-        ft_printf("❌ Error: Failed to detach shared memory ❌\n");
+    if (!gamer)
+        return;
+    
+    ft_printf("🧹 Cleaning up IPC resources for PID %d...\n", getpid());
+
+    if (gamer->board_ptr)
+    {
+        if (shmdt(gamer->board_ptr) == -1)
+            ft_printf("❌ Error: Failed to detach shared memory ❌\n");
+        gamer->board_ptr = NULL;
+        ft_printf("✅ Shared memory detached\n");
+    }
+
+    ft_printf("✅ Process cleanup completed\n");
 }
 
 void    cleanup_orphaned_ipc(key_t key)
 {
     int shm_id;
+    int sem_id;
+    int msg_id;
 
     shm_id = shmget(key, 0, 0666);
     if (shm_id != -1)
@@ -25,33 +38,20 @@ void    cleanup_orphaned_ipc(key_t key)
             }
         }
     }
-}
 
-/* void    clearmemsem(t_gamer *gamer)
-{
-    int total_player;
-    int *player_count_ptr;
-
-    ft_printf("DEBUG: Cleaning up resources...\n");
-
-    player_count_ptr = (int *)(gamer->board_ptr + sizeof(int));
-    total_player = *player_count_ptr;
-
-    ft_printf("DEBUG: Total players = %d\n", total_player);
-
-    if (shmdt(gamer->board_ptr) == -1)
-        ft_printf("❌ Error: Failed to detach shared memory ❌\n");
-    if (total_player <= 1)
+    sem_id = semget(key, 0, 0);
+    if (sem_id != -1)
     {
-        ft_printf("Last player has left. Cleaning up IPC resources...\n");
-
-        if (shmctl(gamer->shm_id, IPC_RMID, 0) == -1)
-            ft_printf("Error: Failed to remove shared memory\n");
-        if (semctl(gamer->sem_id, 0, IPC_RMID) == -1)
-            ft_printf("Error: Failed to remove semaphore\n");
-        if (msgctl(gamer->msg_id, IPC_RMID, 0) == -1)
-            ft_printf("Error: Failde to remove message queue\n");
+        ft_printf("🧹 Cleaning orphaned semaphore with ID %d...\n", sem_id);
+        if (semctl(sem_id, 0, IPC_RMID) == -1)
+            ft_printf("Error: Failed to remove semaphore with ID %d\n", sem_id);
     }
-    else
-        ft_printf("DEBUG: This player does not release Player: %d\n", gamer->player);
-} */
+
+    msg_id = msgget(key, 0);
+    if (msg_id != -1)
+    {
+        ft_printf("🧹 Cleaning orphaned message queue with ID %d...\n", msg_id);
+        if (msgctl(msg_id, IPC_RMID, NULL) == -1)
+            ft_printf("Error: Failed to remove message queue with ID %d\n", msg_id);
+    }
+}

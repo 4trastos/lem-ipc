@@ -1,6 +1,25 @@
 #include "../incl/lemipc.h"
 #include "../lib/printf/ft_printf.h"
 
+t_gamer *global_gamer = NULL;
+
+void    cleanup_handler(int sig)
+{
+    if (global_gamer)
+    {
+        ft_printf("🛑 Received signal %d, cleaning up...\n", sig);
+    
+        if (global_gamer->board_ptr)
+        {
+            shmdt(global_gamer->board_ptr);
+            global_gamer->board_ptr = NULL;
+        }
+        free(global_gamer);
+        global_gamer = NULL;
+    }
+    exit (0);
+}
+
 int main(int argc, char **argv)
 {
     t_gamer  *gamer;
@@ -27,14 +46,23 @@ int main(int argc, char **argv)
         return (1);
     }
     cleanup_orphaned_ipc(key);
-    
+
     gamer = malloc(sizeof(t_gamer));
+    if (!gamer)
+        return (1);
     ft_memset(gamer, 0, sizeof(t_gamer));
+
+    global_gamer = gamer;
+    signal(SIGINT, cleanup_handler);
+    signal(SIGTERM, cleanup_handler);
+    signal(SIGSEGV, cleanup_handler);
+
     pid = getpid();
     gamer->pid = pid;
     gamer->team_id = ft_gameratoi(argv[1]);
     gamer->alive = true;
     gamer->victory = false;
+
     player = ft_resconf(gamer, key, board);
     if (player == 1)
     {
@@ -62,5 +90,6 @@ int main(int argc, char **argv)
     
     clearmemsem(gamer);
     free (gamer);
+    global_gamer = NULL;
     return (0); 
 }

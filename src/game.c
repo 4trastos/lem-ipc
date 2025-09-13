@@ -63,6 +63,7 @@ void    play_turn(t_gamer *gamer)
     struct sembuf   sops;
     int             game_status;
     int             *game_board;
+    bool            cleanup_mem = false;
     
     ft_printf("Player: %d - Team: %d. Attempted to access the dashboard...\n", gamer->player, gamer->team_id);
     
@@ -98,23 +99,11 @@ void    play_turn(t_gamer *gamer)
         {
             ft_printf("Player: %d - Team: %d. 🏆 YOU WIN!!! 🏆\n", gamer->player, gamer->team_id);
             gamer->victory = true;
-            //*(int *)(gamer->board_ptr + sizeof(int)) -= 1;
         }
         else
             ft_printf("⚠️ GAME OVER. No players left on the board. ⚠️\n");
         
-        ft_printf("DEBUG: Last man standing or last player left. Cleaning up IPC resources...\n");
-        if (shmctl(gamer->shm_id, IPC_RMID, NULL) == -1)
-            ft_printf("Error: Failed to remove shared memory\n");
-        if (semctl(gamer->sem_id, 0, IPC_RMID) == -1)
-            ft_printf("Error: Failed to remove semaphore\n");
-        if (msgctl(gamer->msg_id, IPC_RMID, NULL) == -1)
-            ft_printf("Error: Failde to remove message queue\n");
-        
-        gamer->alive = false;
-        sops.sem_op = 1;
-        semop(gamer->sem_id, &sops, 1);
-        return;
+        cleanup_mem = true;
     }
     else
     {
@@ -138,6 +127,19 @@ void    play_turn(t_gamer *gamer)
     {
         ft_printf("❌ Error: semop failed (unlock) ❌\n");
         return;
+    }
+
+    if (cleanup_mem)
+    {
+        ft_printf("DEBUG: Last man standing or last player left. 🧹 Cleaning up IPC resources... 🧹\n");
+        if (shmctl(gamer->shm_id, IPC_RMID, NULL) == -1)
+            ft_printf("Error: Failed to remove shared memory\n");
+        if (semctl(gamer->sem_id, 0, IPC_RMID) == -1)
+            ft_printf("Error: Failed to remove semaphore\n");
+        if (msgctl(gamer->msg_id, IPC_RMID, NULL) == -1)
+            ft_printf("Error: Failde to remove message queue\n");
+
+        gamer->alive = false;
     }
 
     usleep(100000);
