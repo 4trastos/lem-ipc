@@ -23,16 +23,6 @@
 # define    VICTORY     1
 # define    GAME_OVER   2
 
-# define BACKGROUND_RED      "\033[41m"
-# define BACKGROUND_GREEN    "\033[42m"
-# define BACKGROUND_YELLOW   "\033[43m"
-# define BACKGROUND_BLUE     "\033[44m"
-# define BACKGROUND_MAGENTA  "\033[45m"
-# define BACKGROUND_CYAN     "\033[46m"
-# define BACKGROUND_WHITE    "\033[47m"
-# define BACKGROUND_BLACK    "\033[40m"
-# define RESET_COLOR         "\033[0m"
-
 /* Estructura de memoria corregida:
 
 0x0000: [int] board_dim (4 bytes)
