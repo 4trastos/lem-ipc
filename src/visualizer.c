@@ -2,14 +2,14 @@
 #include "../lib/printf/ft_printf.h"
 
 const char *team_colors[] = {
-    RESET_COLOR,
-    RED_COLOR,
-    GREEN_COLOR,
-    YELLOW_COLOR,
-    BLUE_COLOR,
-    MAGENTA_COLOR,
-    CYAN_COLOR,
-    WHITE_COLOR,
+    BACKGROUND_BLACK,
+    BACKGROUND_RED,
+    BACKGROUND_GREEN,
+    BACKGROUND_YELLOW,
+    BACKGROUND_BLUE,
+    BACKGROUND_MAGENTA,
+    BACKGROUND_CYAN,
+    BACKGROUND_WHITE,
 };
 
 const char *get_team_color(int team_id)
@@ -30,10 +30,15 @@ void    draw_board(int *game_board, int board_dim, int players, int teams)
 
     clear_screen();
     ft_printf("----------------------------------\n");
-    ft_printf("         LEMI-IPC VISUALIZER      \n");
+    ft_printf("       LEMI-IPC VISUALIZER      \n");
     ft_printf("----------------------------------\n");
-    ft_printf("Players: %d | Teams: %d\n", players, teams);
-    ft_printf("----------------------------------\n");
+    ft_printf("    Players: %d | Teams: %d\n", players, teams);
+    ft_printf("----------------------------------\n\n");
+    ft_printf("------------ LEGEND --------------\n");
+    for (int i = 1; i <= teams; i++) {
+        ft_printf("    %s  %s Team %d | ", get_team_color(i), RESET_COLOR, i);
+    }
+    ft_printf("\n---------------------------------\n\n");
 
     for (int y = 0; y < board_dim; y++)
     {
@@ -43,7 +48,7 @@ void    draw_board(int *game_board, int board_dim, int players, int teams)
             if (team_id == 0)
                 ft_printf(" . ");
             else
-                ft_printf("%s%2d %s", get_team_color(team_id), team_id, RESET_COLOR);
+                ft_printf("%s %2d %s", get_team_color(team_id), team_id, RESET_COLOR);
         }
         ft_printf("\n");
     }

@@ -23,14 +23,15 @@
 # define    VICTORY     1
 # define    GAME_OVER   2
 
-# define RESET_COLOR    "\033[0m"
-# define RED_COLOR      "\033[31m"
-# define GREEN_COLOR    "\033[32m"
-# define YELLOW_COLOR   "\033[33m"
-# define BLUE_COLOR     "\033[34m"
-# define MAGENTA_COLOR  "\033[35m"
-# define CYAN_COLOR     "\033[36m"
-# define WHITE_COLOR    "\033[37m"
+# define BACKGROUND_RED      "\033[41m"
+# define BACKGROUND_GREEN    "\033[42m"
+# define BACKGROUND_YELLOW   "\033[43m"
+# define BACKGROUND_BLUE     "\033[44m"
+# define BACKGROUND_MAGENTA  "\033[45m"
+# define BACKGROUND_CYAN     "\033[46m"
+# define BACKGROUND_WHITE    "\033[47m"
+# define BACKGROUND_BLACK    "\033[40m"
+# define RESET_COLOR         "\033[0m"
 
 /* Estructura de memoria corregida:
 

@@ -3,13 +3,13 @@ NAME_BONUS = visualizer
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -g
 RM = rm -f
-LIB = -lm -lftprintf
+LIB = -lftprintf
 
 SRC = src/main.c src/game.c src/player.c src/ipc_conf.c src/parse.c src/cleanup.c \
-		src/findenemy.c src/auxiliar.c src/message_queue.c
-BONUS = src/visualizer.c
+        src/findenemy.c src/auxiliar.c src/message_queue.c
+BONUS_SRC = src/visualizer.c src/auxiliar.c
 OBJS = $(SRC:.c=.o)
-OBJS_BONUS = $(BONUS:.c=.o)
+OBJS_BONUS = $(BONUS_SRC:.c=.o)
 
 FT_PRINTF_DIR = lib/printf
 FT_PRINTF = $(FT_PRINTF_DIR)/libftprintf.a
@@ -17,12 +17,12 @@ FT_PRINTF = $(FT_PRINTF_DIR)/libftprintf.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(FT_PRINTF)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(FT_PRINTF_DIR) $(LIB)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(FT_PRINTF_DIR) $(LIB) -lm
 
-bonus: $(NAME_BONUS)
+bonus: re $(NAME_BONUS)
 
 $(NAME_BONUS): $(OBJS_BONUS) $(FT_PRINTF)
-	$(CC) $(CFLAGS) -o $(NAME_BONUS) $(OBJS_BONUS) -L$(FT_PRINTF_DIR) $(LIB) -lm
+	$(CC) $(CFLAGS) $(OBJS_BONUS) -o $(NAME_BONUS) -L$(FT_PRINTF_DIR) $(LIB) -lm
 
 $(FT_PRINTF):
 	@make -C $(FT_PRINTF_DIR)
