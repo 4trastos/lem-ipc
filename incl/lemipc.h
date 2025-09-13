@@ -76,7 +76,6 @@ void    cleanup_orphaned_ipc(key_t key);
 //*** game logic ***/
 bool    is_surrounded(t_gamer *gamer);
 bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x);
-bool    check_for_victory(t_gamer *gamer);
 int     ft_resconf(t_gamer *gamer, key_t key, int board);
 int     player_one(t_gamer *gamer, key_t  key);
 int     other_player(t_gamer *gamer, key_t key);
