@@ -52,7 +52,7 @@ void    to_moveplayer(t_gamer *gamer, int target_y, int target_x)
             
             game_board[oldy * gamer->board_dim + oldx] = 0;
             game_board[gamer->y * gamer->board_dim + gamer->x] = gamer->team_id;
-            ft_printf("🚀 Player: %d - Team: %d moved to (%d, %d) 🚀\n", gamer->player, gamer->team_id, gamer->x, gamer->y);
+            ft_printf("🚀 Player: %d - Team: %d moved to (%d, %d) 🚀\n", gamer->player, gamer->team_id, gamer->y, gamer->x);
         }
         else
             ft_printf("⛔ Move became invalid during calculation ⛔\n");

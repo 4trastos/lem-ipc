@@ -44,7 +44,7 @@ void    ft_move(t_gamer *gamer)
     if (find_enemy_target(gamer, &target_y, &target_x))
     {
         to_moveplayer(gamer, target_y, target_x);
-        send_message(gamer, target_x, target_y);
+        send_message(gamer, target_y, target_x);
     }
     else
         ft_printf("⚠️ Waiting for an opponent ⚠️\n");

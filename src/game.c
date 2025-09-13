@@ -18,7 +18,6 @@ int get_total_teams(t_gamer *gamer)
         for (int x = 0; x < gamer->board_dim; x++)
         {
             cell_value = game_board[y * gamer->board_dim + x];
-            //ft_printf("[DEBUG - 06] VALOR DE LA CELDA DE RAM CONTANDO EQIUPOS: %d\n", cell_value);
             if (cell_value != 0)
             {
                 if (cell_value > max_teams || cell_value < 0)
@@ -72,7 +71,13 @@ void    play_turn(t_gamer *gamer)
     sops.sem_flg = 0;
     if (semop(gamer->sem_id, &sops, 1) == -1)
     {
-        ft_printf("❌ Error: semop failed (lock) ❌\n");
+        if (errno == EIDRM || errno == EINVAL)
+        {
+            ft_printf("Player: %d - Team: %d. Game ended. The semaphore has been removed. 🏆 YOU WIN!!! 🏆\n", gamer->player, gamer->team_id);
+            gamer->alive = false;
+            return;
+        }
+        ft_printf("❌ Error: semop failed (lock) with code: ( %d ) ❌\n", errno);
         return;
     }
     
@@ -87,20 +92,26 @@ void    play_turn(t_gamer *gamer)
         return;
     }
 
-    if (game_status == GAME_OVER)
+    if (game_status == GAME_OVER || game_status == VICTORY)
     {
-        ft_printf("⚠️ GAME OVER. No players left on the board. ⚠️\n");
-        usleep(500000);
-        sops.sem_op = 1;
-        semop(gamer->sem_id, &sops, 1);
-        return;
-    }
-
-    if (game_status == VICTORY)
-    {
-        ft_printf("Player: %d - Team: %d. 🏆 YOU WIN!!! 🏆\n", gamer->player, gamer->team_id);
+        if (game_status == VICTORY)
+        {
+            ft_printf("Player: %d - Team: %d. 🏆 YOU WIN!!! 🏆\n", gamer->player, gamer->team_id);
+            gamer->victory = true;
+            //*(int *)(gamer->board_ptr + sizeof(int)) -= 1;
+        }
+        else
+            ft_printf("⚠️ GAME OVER. No players left on the board. ⚠️\n");
+        
+        ft_printf("DEBUG: Last man standing or last player left. Cleaning up IPC resources...\n");
+        if (shmctl(gamer->shm_id, IPC_RMID, NULL) == -1)
+            ft_printf("Error: Failed to remove shared memory\n");
+        if (semctl(gamer->sem_id, 0, IPC_RMID) == -1)
+            ft_printf("Error: Failed to remove semaphore\n");
+        if (msgctl(gamer->msg_id, IPC_RMID, NULL) == -1)
+            ft_printf("Error: Failde to remove message queue\n");
+        
         gamer->alive = false;
-        gamer->victory = true;
         sops.sem_op = 1;
         semop(gamer->sem_id, &sops, 1);
         return;
@@ -110,9 +121,9 @@ void    play_turn(t_gamer *gamer)
         if (is_surrounded(gamer))
         {
             ft_printf("Player: %d - Team: %d. ☠️ You are surrounded and eliminated. ☠️\n", gamer->player, gamer->team_id);
-            *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
-            game_board[gamer->y * gamer->board_dim + gamer->x] = 0;
             gamer->alive = false;
+            game_board[gamer->y * gamer->board_dim + gamer->x] = 0;
+            *(int *)(gamer->board_ptr + sizeof(int)) -= 1;
         }
         else
             ft_move(gamer);

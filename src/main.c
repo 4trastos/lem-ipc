@@ -26,6 +26,7 @@ int main(int argc, char **argv)
         ft_printf("❌ Error: ftok failed ❌\n");
         return (1);
     }
+    cleanup_orphaned_ipc(key);
     
     gamer = malloc(sizeof(t_gamer));
     ft_memset(gamer, 0, sizeof(t_gamer));

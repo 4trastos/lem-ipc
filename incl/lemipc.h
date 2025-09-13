@@ -16,6 +16,7 @@
 # include <stdbool.h>
 # include <time.h>
 # include <math.h>
+# include <errno.h>
 
 # define    ON_GOING    0
 # define    VICTORY     1
@@ -64,26 +65,31 @@ typedef struct s_messenger
     int             target_y;
 }   t_messenger;
 
-//*** gamer functions ***
+//*** main functions ***/
 void    play_turn(t_gamer *gamer);
-void    place_player_randomly(t_gamer *gamer);
+void    clearmemsem(t_gamer *gamer);
+void    cleanup_orphaned_ipc(key_t key);
+
+//*** game logic ***/
 bool    is_surrounded(t_gamer *gamer);
-void    ft_move(t_gamer *player);
 bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x);
-void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
 bool    check_for_victory(t_gamer *gamer);
-void    send_message(t_gamer *gamer, int target_x, int target_y);
 int     ft_resconf(t_gamer *gamer, key_t key, int board);
 int     player_one(t_gamer *gamer, key_t  key);
 int     other_player(t_gamer *gamer, key_t key);
-void    clearmemsem(t_gamer *gamer);
 int     check_game_status(t_gamer *gamer);
-int     receive_message(t_gamer *gamer);
 int     get_total_teams(t_gamer *gamer);
-
-//*** auxiliary functions ***
-int     ft_gameratoi(char *str);
 int     argument_parsing(char **argv, int *board);
+void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
+void    place_player_randomly(t_gamer *gamer);
+void    ft_move(t_gamer *player);
+
+//*** comunications */
+int     receive_message(t_gamer *gamer);
+void    send_message(t_gamer *gamer, int target_y, int target_x);
+
+//*** auxiliary functions ***/
+int     ft_gameratoi(char *str);
 void    *ft_memset(void *s, int c, size_t n);
 void    *ft_memcpy(void *dst, const void *sc, size_t n);
 
