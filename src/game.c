@@ -7,7 +7,7 @@ int get_total_teams(t_gamer *gamer)
     int     cell_value;
     int     max_teams = 100;
     bool    team_present[max_teams + 1];
-    int     *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
+    int     *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
 
     ft_printf("[DEBUG - 07] GET TOTAL TEAMS\n");
 
@@ -39,22 +39,22 @@ int get_total_teams(t_gamer *gamer)
 
 int check_game_status(t_gamer *gamer)
 {
-    int total_teams;
+    int current_teams;
     int players;
     int initial_teams;
 
     ft_printf("[DEBUG - 06] CHECK GAME ESTATUS\n");
-    initial_teams = *(int*)(gamer->board_ptr + 2 * sizeof(int));
-    total_teams = get_total_teams(gamer);
+    initial_teams = *(int*)(gamer->board_ptr + 3 * sizeof(int));
+    current_teams = get_total_teams(gamer);
     players = *(int*)(gamer->board_ptr + sizeof(int));
     ft_printf("[DEBUG - 08] EQUIPOS DE INICIO: ( %d )\n", initial_teams);
-    ft_printf("[DEBUG - 09] EQUIPOS EN EL TABLERO: ( %d ) - JUGADORES EN EL TABLERO: ( %d )\n", total_teams, players);
+    ft_printf("[DEBUG - 09] EQUIPOS EN EL TABLERO: ( %d ) - JUGADORES EN EL TABLERO: ( %d )\n", current_teams, players);
 
-    if (total_teams == -1)
+    if (current_teams == -1)
         return (-1);
     if (players == 0)
         return(GAME_OVER);
-    if (initial_teams > 1 && total_teams == 1)
+    if (initial_teams > 1 && current_teams == 1)
         return(VICTORY);
     return(ON_GOING);
 }
@@ -84,7 +84,7 @@ void    play_turn(t_gamer *gamer)
     }
     
     ft_printf("Player: %d - Team: %d. Board access granted.\n", gamer->player, gamer->team_id);
-    game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
+    game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
     game_status = check_game_status(gamer);
 
     if (game_status == -1)

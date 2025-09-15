@@ -4,7 +4,7 @@
 static bool bfs_find_step(t_gamer *gamer, int target_y, int target_x, int *step_y, int *step_x)
 {
     int dim = gamer->board_dim;
-    int *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
+    int *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
     bool visited[dim][dim];
     t_node *queue = malloc(sizeof(t_node) * dim * dim);
     int front = 0, rear = 0;
@@ -76,7 +76,7 @@ void to_moveplayer(t_gamer *gamer, int target_y, int target_x)
 {
     int step_x = 0, step_y = 0;
     int new_x, new_y;
-    int *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
+    int *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
 
     if (bfs_find_step(gamer, target_y, target_x, &step_y, &step_x))
     {

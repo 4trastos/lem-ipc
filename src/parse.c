@@ -3,7 +3,7 @@
 
 void maybe_decrement_team(t_gamer *gamer, int team_id)
 {
-    int *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
+    int *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
     bool team_still_exists = false;
     
     for (int i = 0; i < gamer->board_size; i++)
