@@ -8,12 +8,7 @@ void    cleanup_handler(int sig)
     if (global_gamer)
     {
         ft_printf("🛑 Received signal %d, cleaning up...\n", sig);
-    
-        if (global_gamer->board_ptr)
-        {
-            shmdt(global_gamer->board_ptr);
-            global_gamer->board_ptr = NULL;
-        }
+        clearmemsem(global_gamer);
         free(global_gamer);
         global_gamer = NULL;
     }

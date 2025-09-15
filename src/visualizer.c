@@ -145,15 +145,15 @@ int main(int argc, char **argv)
     board_dim = (int)sqrt(board_size);
     players = *(int *)(shm_prt + sizeof(int));
     teams = *(int *)(shm_prt + 2 * sizeof(int));
-    starting_teams = teams;
-    game_board = (int *)(shm_prt + 3 * sizeof(int));
+    starting_teams = *(int *)(shm_prt + 3 * sizeof(int));
+    game_board = (int *)(shm_prt + 4 * sizeof(int));
 
     while (teams > 1)
     {   
         players = *(int *)(shm_prt + sizeof(int));
         teams = *(int *)(shm_prt + 2 * sizeof(int));
         draw_board(game_board, board_dim, players, teams);
-        usleep(500000);
+        usleep(750000);
     }
     
     draw_board(game_board, board_dim, players, teams);
