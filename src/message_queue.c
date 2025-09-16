@@ -30,14 +30,13 @@ int receive_message(t_gamer *gamer)
             gamer->player, gamer->team_id, message.target_x, message.target_y, message.target);
         
         if (game_board[message.target_y * gamer->board_dim + message.target_x] == message.target && 
-            game_board[message.target_y * gamer->board_dim + message.target_x] != gamer->team_id)
+            game_board[message.target_y * gamer->board_dim + message.target_x] != 0)
         {
-            ft_printf("Player: %d - Team: %d pursuing target from message.\n", gamer->player, gamer->team_id);
             to_moveplayer(gamer, message.target_y, message.target_x);
             return (1);
         }
         else
-            ft_printf("⚠️ Player: %d - Team: %d received an outdated message. Ignoring. ⚠️\n", gamer->player, gamer->team_id);
+            ft_printf("⚠️  Obsolete message ignored (target gone)\n");
     }
     return (0);
 }

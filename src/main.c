@@ -5,13 +5,39 @@ t_gamer *global_gamer = NULL;
 
 void    cleanup_handler(int sig)
 {
-    if (global_gamer)
+    t_messenger cleanup_msg;
+    int         players = 0;
+
+    if (!global_gamer)
+        exit (0);
+
+    ft_printf("🛑 Received signal %d, cleaning up...\n", sig);
+    players = *(int *)(global_gamer->board_ptr + sizeof(int));
+
+    if (players < 1)
+        players = 1;
+
+    cleanup_msg.mtype    = 99;
+    cleanup_msg.data     = 1;
+    cleanup_msg.team_id  = 0;
+    cleanup_msg.target   = 0;
+    cleanup_msg.target_x = 0;
+    cleanup_msg.target_y = 0;
+
+    for (int i = 0; i < players; i++)
     {
-        ft_printf("🛑 Received signal %d, cleaning up...\n", sig);
-        clearmemsem(global_gamer);
-        free(global_gamer);
-        global_gamer = NULL;
+        if (msgsnd(global_gamer->msg_id, &cleanup_msg, sizeof(t_messenger) - sizeof(long), IPC_NOWAIT) == -1)
+            msgsnd(global_gamer->msg_id, &cleanup_msg, sizeof(t_messenger) - sizeof(long), 0);
     }
+    
+    if (semctl(global_gamer->sem_id, 0, IPC_RMID) == -1)
+        ft_printf("❌ Warning: semctl(IPC_RMID) failed (errno %d)\n", errno);
+    else
+        ft_printf("⚠️ Semaphore removed (waking up semop)\n");
+
+    cleanup_ipc(global_gamer);
+    free(global_gamer);
+    global_gamer = NULL;
     exit (0);
 }
 
@@ -83,7 +109,7 @@ int main(int argc, char **argv)
     while (gamer->alive == true && gamer->victory == false)
         play_turn(gamer);
     
-    clearmemsem(gamer);
+    cleanup_ipc(gamer);
     free (gamer);
     global_gamer = NULL;
     return (0); 

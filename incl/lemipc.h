@@ -23,15 +23,6 @@
 # define    VICTORY     1
 # define    GAME_OVER   2
 
-/* Estructura de memoria corregida:
-
-0x0000: [int] board_dim (4 bytes)
-0x0004: [int] player_count (4 bytes)  
-0x0008: [int] celda (0,0) (4 bytes)
-0x000C: [int] celda (0,1) (4 bytes)
-...
-0x...: [int] celda (99,99) (4 bytes) */
-
 typedef struct s_node
 {
     int                 x;
@@ -72,13 +63,14 @@ typedef struct s_messenger
     int             target;
     int             target_x;
     int             target_y;
+    int             data;
 }   t_messenger;
 
 extern t_gamer *global_gamer;
 
 //*** main functions ***/
 void    play_turn(t_gamer *gamer);
-void    clearmemsem(t_gamer *gamer);
+void    cleanup_ipc(t_gamer *gamer);
 void    cleanup_orphaned_ipc(key_t key);
 
 //*** game logic ***/
@@ -88,12 +80,12 @@ int     ft_resconf(t_gamer *gamer, key_t key, int board);
 int     player_one(t_gamer *gamer, key_t  key);
 int     other_player(t_gamer *gamer, key_t key);
 int     check_game_status(t_gamer *gamer);
-int     get_total_teams(t_gamer *gamer);
 int     argument_parsing(char **argv, int *board);
 void    to_moveplayer(t_gamer *gamer, int target_y, int target_x);
 void    place_player_randomly(t_gamer *gamer);
 void    ft_move(t_gamer *player);
 void    maybe_decrement_team(t_gamer *gamer, int team_id);
+void    player_death(t_gamer *gamer);
 
 //*** comunications */
 int     receive_message(t_gamer *gamer);

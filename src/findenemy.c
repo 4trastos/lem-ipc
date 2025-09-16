@@ -7,8 +7,6 @@ bool is_surrounded(t_gamer *gamer)
     int enemy_count = 0;
     int *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
 
-    ft_printf("[DEBUG - 02] Check if surrounded. Player: %d\n", gamer->player);
-
     for (int y = gamer->y - 1; y <= gamer->y + 1; y++)
     {
         for (int x = gamer->x - 1; x <= gamer->x + 1; x++)
@@ -22,8 +20,6 @@ bool is_surrounded(t_gamer *gamer)
             }
         }
     }
-
-    ft_printf("[DEBUG - 02] Player %d has %d enemies around\n", gamer->player, enemy_count);
 
     return (enemy_count >= 2);
 }
@@ -59,8 +55,6 @@ bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
     target_team = 0;
     found_target = false;
 
-    ft_printf("[DEBUG - 04] ENTRO A BUSCAR UN ONJETIVO- Player: %d\n", gamer->player);
-
     for (int y = 0; y < gamer->board_dim; y++)
     {
         for (int x = 0; x < gamer->board_dim; x++)
@@ -81,7 +75,7 @@ bool    find_enemy_target(t_gamer *gamer, int *target_y, int *target_x)
         }
     }
     if (found_target)
-        ft_printf("## OBJETIVO ENCONTRADO => Team: %d - Coordendas: (%d, %d)\n", target_team, *target_x, *target_y);
+        ft_printf("🎯 OBJETIVO ENCONTRADO => Team: %d - Coordendas: (%d, %d) 🎯\n", target_team, *target_x, *target_y);
     
     return (found_target);
 }

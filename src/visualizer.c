@@ -42,28 +42,33 @@ const char *get_team_symbol(int team_id)
     return " ";
 }
 
-void    clear_screen(void)
+void clear_screen(void)
 {
-    ft_printf("\033[H\033[J");
+    // Solo reposiciona el cursor arriba a la izquierda (sin borrar toda la terminal)
+    ft_printf("\033[H");
 }
 
-void    draw_board(int *game_board, int board_dim, int players, int teams)
+void draw_static_header(int board_dim, int players, int teams)
 {
-    int team_id;
-
-    clear_screen();
     ft_printf("------------------------------------------\n");
     ft_printf("           LEMI-IPC VISUALIZER           \n");
     ft_printf("------------------------------------------\n");
     ft_printf("   Players: %d | Teams: %d | Board: %dx%d\n", players, teams, board_dim, board_dim);
     ft_printf("------------------------------------------\n\n");
-    
+
     ft_printf("------------- LEGEND ---------------\n");
     for (int i = 1; i <= teams && i <= 8; i++) {
-        ft_printf(" %s %s %sTeam %d%s ", get_team_color(i), get_team_symbol(i), RESET_COLOR, i, (i % 4 == 0) ? "\n" : "");
+        ft_printf(" %s %s %sTeam %d%s ", get_team_color(i), get_team_symbol(i),
+                   RESET_COLOR, i, (i % 4 == 0) ? "\n" : "");
     }
     ft_printf("\n-------------------------------------\n\n");
+}
 
+void draw_board(int *game_board, int board_dim, int players, int teams)
+{
+    int team_id;
+    (void)teams;
+    (void)players;
     // Borde superior
     ft_printf("   ");
     for (int x = 0; x < board_dim; x++) {
@@ -81,9 +86,8 @@ void    draw_board(int *game_board, int board_dim, int players, int teams)
                 ft_printf(" · ");
             else
             {
-                ft_printf("%s", get_team_color(team_id));
-                ft_printf(" %s ", get_team_symbol(team_id));
-                ft_printf("%s", RESET_COLOR);
+                ft_printf("%s %s %s", get_team_color(team_id),
+                          get_team_symbol(team_id), RESET_COLOR);
             }
         }
         ft_printf("|\n");
@@ -95,8 +99,6 @@ void    draw_board(int *game_board, int board_dim, int players, int teams)
         ft_printf("---");
     }
     ft_printf("\n");
-
-    ft_printf("------------------------------------------\n");
     ft_printf("Press CTRL+C to exit...\n");
 }
 
@@ -141,22 +143,30 @@ int main(int argc, char **argv)
         return (1);
     }
 
-    board_size = *(int *)shm_prt;
-    board_dim = (int)sqrt(board_size);
+    board_dim = *(int *)shm_prt;
+    board_size = board_dim * board_dim;
     players = *(int *)(shm_prt + sizeof(int));
     teams = *(int *)(shm_prt + 2 * sizeof(int));
     starting_teams = *(int *)(shm_prt + 3 * sizeof(int));
     game_board = (int *)(shm_prt + 4 * sizeof(int));
 
+    // Dibujamos encabezado solo una vez
+    draw_static_header(board_dim, players, teams);
+
     while (teams > 1)
-    {   
+    {
         players = *(int *)(shm_prt + sizeof(int));
         teams = *(int *)(shm_prt + 2 * sizeof(int));
+
+        clear_screen(); // Solo reposiciona
         draw_board(game_board, board_dim, players, teams);
-        usleep(750000);
+
+        usleep(300000); // más lento para apreciar el movimiento
     }
-    
+
+    clear_screen();
     draw_board(game_board, board_dim, players, teams);
+
     int winning_team = 0;
     for (int i = 0; i < board_size; i++)
     {
