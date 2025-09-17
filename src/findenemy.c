@@ -4,7 +4,9 @@
 bool is_surrounded(t_gamer *gamer)
 {
     int cell_value;
-    int enemy_count = 0;
+    int enemy_count[8];
+    int teams[8];
+    int distinct = 0;
     int *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
 
     for (int y = gamer->y - 1; y <= gamer->y + 1; y++)
@@ -16,12 +18,39 @@ bool is_surrounded(t_gamer *gamer)
             {
                 cell_value = game_board[y * gamer->board_dim + x];
                 if (cell_value != 0 && cell_value != gamer->team_id)
-                    enemy_count++;
+                {
+                    int found = -1;
+                    for (int k = 0; k < distinct; k++)
+                    {
+                        if (teams[k] == cell_value)
+                        {
+                            found = k;
+                            break;
+                        }
+                    }
+                    if (found == -1)
+                    {
+                        if (distinct < 8)
+                        {
+                            teams[distinct] = cell_value;
+                            enemy_count[distinct] = 1;
+                            if (enemy_count[distinct] >= 2)
+                                return (true);
+                            distinct++;
+                        }
+                    }
+                    else
+                    {
+                        enemy_count[found]++;
+                        if (enemy_count[found] >= 2)
+                            return (true);
+                    }
+                }
             }
         }
     }
 
-    return (enemy_count >= 2);
+    return (false);
 }
 
 
