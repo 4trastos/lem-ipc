@@ -4,7 +4,7 @@
 void    send_message(t_gamer *gamer, int target_y, int target_x)
 {
     t_messenger message;
-    int         *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
+    int         *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
 
     message.mtype = gamer->team_id;
     message.team_id = gamer->team_id;
@@ -22,7 +22,7 @@ void    send_message(t_gamer *gamer, int target_y, int target_x)
 int receive_message(t_gamer *gamer)
 {
     t_messenger message;
-    int         *game_board = (int *)(gamer->board_ptr + 3 * sizeof(int));
+    int         *game_board = (int *)(gamer->board_ptr + 4 * sizeof(int));
 
     if (msgrcv(gamer->msg_id, &message, sizeof(t_messenger) - sizeof(long), gamer->team_id, IPC_NOWAIT) > 0)
     {
