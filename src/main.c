@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     board = 0;
     if (argc < 3 || argc > 4 || (ft_gameratoi(argv[2]) != 42))
     {
-        ft_printf("❌ Error: Use => ./lemipc <team> <ID proyect: 42> <Board (opcional)> ❌\n");
+        ft_printf("❌ Use: %s <team> <ID proyect: 42> <Board (opcional)> ❌\n", argv[0]);
         return (1);
     }
 
