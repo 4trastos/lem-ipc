@@ -70,11 +70,16 @@ int    player_one(t_gamer *gamer, key_t  key)
     *teams_count = 1;
     *initial_teams = 1;
     
-    gamer->sem_id = semget(key, 1, IPC_CREAT | 0666);
+    gamer->sem_id = semget(key, 1, IPC_CREAT | IPC_EXCL | 0666);
     if (gamer->sem_id == -1)
     {
-        ft_printf("❌ Error: semget failed ❌\n");
-        return (-1);
+        cleanup_orphaned_ipc(key);
+        gamer->sem_id = semget(key, 1, IPC_CREAT | IPC_EXCL | 0666);
+        if (gamer->sem_id == -1)
+        {
+            ft_printf("❌ Error: semget failed tras limpieza ❌\n");
+            return (-1);
+        }
     }
     
     arg.val = 1;
