@@ -52,3 +52,16 @@ int ft_gameratoi(char *str)
     }
     return ((int)num);
 }
+
+int ft_memcmp(const void *s1, const void *s2, size_t n)
+{
+    const unsigned char *x = (const unsigned char *)s1;
+    const unsigned char *z = (const unsigned char *)s2;
+
+    for (size_t i = 0; i < n; i++)
+    {
+        if (x[i] != z[i])
+            return (x[i] - z[i]);
+    }
+    return 0;
+}

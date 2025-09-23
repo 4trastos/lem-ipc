@@ -95,5 +95,6 @@ void    send_message(t_gamer *gamer, int target_y, int target_x);
 int     ft_gameratoi(char *str);
 void    *ft_memset(void *s, int c, size_t n);
 void    *ft_memcpy(void *dst, const void *sc, size_t n);
+int     ft_memcmp(const void *s1, const void *s2, size_t n);
 
 #endif

@@ -8,7 +8,7 @@ void    cleanup_handler(int sig)
     t_messenger cleanup_msg;
     int         players = 0;
 
-    if (!global_gamer)
+    if (!global_gamer || !global_gamer->alive)
         exit (0);
 
     ft_printf("🛑 Received signal %d, cleaning up...\n", sig);
@@ -30,6 +30,8 @@ void    cleanup_handler(int sig)
             msgsnd(global_gamer->msg_id, &cleanup_msg, sizeof(t_messenger) - sizeof(long), 0);
     }
     
+    global_gamer->alive = false;
+
     if (semctl(global_gamer->sem_id, 0, IPC_RMID) == -1)
         ft_printf("❌ Warning: semctl(IPC_RMID) failed (errno %d)\n", errno);
     else

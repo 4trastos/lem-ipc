@@ -21,6 +21,7 @@ void    cleanup_ipc(t_gamer *gamer)
     
     ft_printf("🧹 Cleaning up IPC resources for PID %d...\n", getpid());
 
+    // Se desvincula la memoria compartida
     if (gamer->board_ptr)
     {
         if (shmdt(gamer->board_ptr) == -1)
@@ -29,12 +30,13 @@ void    cleanup_ipc(t_gamer *gamer)
         ft_printf("✅ Shared memory detached\n");
     }
 
+    // El último proceso en la memoria compartida debe ser el responsable de la limpieza total
     struct shmid_ds shm_info;
     if (shmctl(gamer->shm_id, IPC_STAT, &shm_info) != -1)
     {
-        if (shm_info.shm_nattch == 0)
+        if (shm_info.shm_nattch == 1) // Este proceso está a punto de salir, por lo que él es el último
         {
-            ft_printf("📢 Last process detached (nattch==0). 🧹 Cleaning up IPC resources... 🧹\n");
+            ft_printf("📢 Last process detached (nattch==1). 🧹 Cleaning up all IPC resources... 🧹\n");
             
             if (shmctl(gamer->shm_id, IPC_RMID, NULL) == -1 && errno != EINVAL && errno != EIDRM)
                 ft_printf("❌ Failed to remove shared memory (errno %d) ❌\n", errno);
@@ -49,9 +51,7 @@ void    cleanup_ipc(t_gamer *gamer)
     else
     {
         ft_printf("❌ shmctl(IPC_STAT) failed (errno %d)\n", errno);
-        return;
     }
-
     ft_printf("✅ Process cleanup completed\n");
 }
 
