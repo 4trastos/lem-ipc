@@ -35,7 +35,12 @@ void    cleanup_handler(int sig)
     if (semctl(global_gamer->sem_id, 0, IPC_RMID) == -1)
         ft_printf("❌ Warning: semctl(IPC_RMID) failed (errno %d)\n", errno);
     else
-        ft_printf("⚠️ Semaphore removed (waking up semop)\n");
+        ft_printf("⚠️ Semaphore removed\n");
+
+    if (msgctl(global_gamer->msg_id, 0, IPC_RMID) == -1)
+        ft_printf("❌ Warning: msgctl(IPC_RMID) failed (errno %d)\n", errno);
+    else
+        ft_printf("⚠️ Messages removed\n");
 
     cleanup_ipc(global_gamer);
     free(global_gamer);
