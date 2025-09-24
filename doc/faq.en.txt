@@ -1,0 +1,150 @@
+> \-----Mensaje original-----
+> De: \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+> Enviado: Viernes, 14 de mayo, 7:36 PM
+> Para: Sebastien Benoit
+> Asunto: Pregunta LEMIPC
+>
+> Hola,
+> Tengo unas pequeñas preguntas sobre LEMIPC:
+>
+> * ¿Cuáles son las reglas de movimiento para los jugadores?
+>
+> Moverse una casilla a la vez (una casilla por bloqueo del mapa), en las direcciones arriba, abajo, derecha e izquierda (sin diagonales).
+>
+> * ¿De qué tamaño es el tablero?
+>
+> El tamaño depende de ti, establécelo en los defines.
+>
+> * ¿Cuántos jugadores hay?
+>
+> No hay un límite específico, lo mismo para el número de equipos. Deberíamos probar con unos pocos jugadores (3 o 4).
+>
+> \--
+> Sebastien BENOIT
+>
+> \-----Mensaje original-----
+> De: @@@@@@@@@@@@@@@@@@@@
+> Enviado: Viernes, 21 de mayo, 11:57 AM
+> Para: Beeone
+> Asunto: LEMIPC: Necesito aclaraciones...
+>
+> Hola,
+>
+> ¿El enunciado realmente nos da tanta libertad como parece? Así que tengo unas preguntas ;)
+>
+> 1. Cuando un jugador está rodeado, ¿cómo sabe que debe morir? ¿Es el último jugador que ayudó a rodearlo quien comprueba si el otro está rodeado y luego envía un mensaje diciendo que está muerto? Vi que:
+>
+> "Cuando un jugador se da cuenta de que está rodeado por al menos 2 jugadores del mismo equipo contrario, debe salir del tablero."
+>
+> El jugador rodeado debe verificar esto antes de intentar moverse.
+>
+> ...pero en ese caso, ¿para qué sirven las msgqs? No veo su utilidad en el programa.
+>
+> Para comunicar a otros la posición de un jugador a atacar.
+>
+> 2. ¿Los movimientos son aleatorios o inteligentes?
+>
+> Inteligentes (obviamente necesitas perseguir jugadores de otros equipos mientras intentas ponerte de acuerdo sobre un objetivo).
+>
+> 3. ¿Podemos crear un hilo adicional dedicado a la visualización para tener un código más limpio?
+>
+> (No hilos, sino procesos)
+>
+> Sí, puedes crear un cliente específico para la visualización, pero no es este cliente quien debe crear el mapa. No debe modificar nada en el juego.
+>
+> 4. Pregunta potencialmente tonta: ¿Cuántos jugadores pueden jugar al mismo tiempo? En otras palabras, ¿el valor inicial del semáforo para acceder al recurso debería ser 1 o...?
+>
+> Solo un jugador puede jugar a la vez, de lo contrario corremos el riesgo de tener movimientos superpuestos en el mapa.
+>
+> \--
+> Sebastien BENOIT
+>
+> \-----Mensaje original-----
+> De: %%%%%%%%%%%%%%%%%%%%%%%
+> Enviado: Lunes, 24 de mayo, 3:43 PM
+> Para: Seb, correcto
+> Asunto: LEMIPC: ¡Dos preguntas más!
+>
+> Hola,
+>
+> Tengo dos preguntas más sobre LEMIPC.
+>
+> 1. Opté por el uso de un proceso dedicado a la capa gráfica. Este proceso puede acceder a todas las estructuras de los jugadores. ¿Pero debemos usar el semáforo para acceder a los datos de los jugadores antes de acceder a la información compartida? ¿O puedo usar directamente la información de mis estructuras? (Esto es solo para la capa gráfica, sé que los jugadores no pueden).
+>
+> Si son solo datos de solo lectura, no se necesita semáforo. Sin embargo, en cuanto se trate de datos a los que al menos 2 procesos puedan acceder simultáneamente, y si al menos uno de ellos puede modificarlos, todos los accesos (incluida la lectura) deben pasar por un semáforo.
+>
+> 2. ¿Cuál es el objetivo de la pseudo-inteligencia artificial?
+>
+> Es más bien un bonus, la IA no usa IPCs, pero sincronizar jugadores de un equipo para atacar al mismo jugador sí lo hace.
+>
+> Por ahora, todos los jugadores se abalanzan unos sobre otros, y cada equipo intenta rodear a uno del otro equipo. Pero gráficamente, es confuso y extraño... ¿Es esa la solución entonces?
+>
+> Sí. Pero se puede refinar, no necesitas más de 2, pero deberían ser los 2 más cercanos para aumentar sus posibilidades de éxito.
+>
+> También puedes considerar pasar un parámetro para el “nivel de IA” a usar, para que equipos de inteligencia desigual puedan luchar.
+>
+> \--
+> Sebastien BENOIT
+>
+> \-----Mensaje original-----
+> De: +++++++++++++++++++++++
+> Enviado: Martes, 25 de mayo, 3:15 PM
+> Para: Sebastien Benoit
+> Asunto: LEMIPC: Preguntas
+>
+> Hola,
+>
+> Me preguntaba cómo deberíamos hacer LEMIPC,
+>
+> ¿Hay un único ejecutable que hace fork tantas veces como sea necesario para crear mis equipos y jugadores?
+>
+> Ejemplo: 2 equipos de 3 jugadores, mi programa hará fork para crear los 6 jugadores que luego lucharán e iniciarán el juego.
+>
+> No
+>
+> O
+>
+> ¿Hay un ejecutable, y lanzaremos tantos ejecutables como equipos haya que jueguen juntos, y el programa hará fork solo lo suficiente para crear los 3 jugadores de cada equipo?
+>
+> No, otra vez.
+>
+> Lanzamos un ejecutable por cada jugador, especificando su equipo como parámetro.
+>
+> Nunca hay necesidad de usar fork.
+>
+> \--
+> Sebastien BENOIT
+>
+> \-----------------------------:
+> Hola,
+>
+> Tengo unas preguntas sobre el flujo del juego.
+>
+> ¿El juego comienza tan pronto como el primer jugador crea el entorno del juego (inicializando IPCs, creando el tablero de juego, etc.)? ¿O el que crea el juego define el número de jugadores y equipos que participarán, y el juego comienza cuando todos han llegado?
+>
+> No importa.
+>
+> En el primer caso, ¿significa que un jugador puede unirse al juego cuando quiera, incluso en medio de la partida?
+>
+> Sí, pero el enfoque está en los IPCs, y simplemente empezaremos el juego en buenas condiciones.
+>
+> En ese caso, ¿cómo manejas el final del juego? En efecto, un jugador solo muere cuando 2 jugadores de un equipo contrario lo rodean. Si el equipo 1 extermina al equipo 2, al menos 2 jugadores permanecerán en el tablero. ¿Cómo detienes el juego?
+>
+> El juego termina cuando el equipo contrario está completamente eliminado.
+>
+> Enunciado: "Para que un equipo gane el juego, debe ser el único que quede en el tablero."
+>
+> ¿Los jugadores juegan por turnos (un concepto de ciclos), o pueden jugar en cualquier momento (siempre que el mapa no esté bloqueado)?
+>
+> Eso depende de los hilos y sus misterios ;)
+>
+> Concretamente, ¿puede el Jugador A jugar dos veces mientras el Jugador B aún no ha jugado?
+>
+> Sí, eso puede pasar claramente.
+>
+> ¿Podemos definir un número máximo de jugadores mediante un #define y usar un array, o deberíamos gestionar a los jugadores mediante una estructura como una lista enlazada?
+>
+> Ninguno, el número de jugadores no está limitado, solo puedes comprobar el mapa para ver qué equipo ocupa qué casilla.
+>
+> \--
+> Sebastien BENOIT
