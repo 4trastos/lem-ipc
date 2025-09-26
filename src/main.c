@@ -41,6 +41,11 @@ void    cleanup_handler(int sig)
         ft_printf("❌ Warning: msgctl(IPC_RMID) failed (errno %d)\n", errno);
     else
         ft_printf("⚠️ Messages removed\n");
+    if (shmctl(global_gamer->shm_id, IPC_RMID, NULL))
+         ft_printf("❌ Failed to remove shared memory (errno %d) ❌\n", errno);
+    else
+        ft_printf("⚠️  Shared memory removed \n");
+        
 
     cleanup_ipc(global_gamer);
     free(global_gamer);
